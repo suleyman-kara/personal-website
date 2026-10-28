@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .stripe-hero {
+    background: linear-gradient(135deg, #ffd6f5 0%, #c9c4ff 30%, #a5e3ff 60%, #fff0c2 100%);
+    opacity: 0.75;
+  }
+  .stripe-cta {
+    background: linear-gradient(120deg, #635bff 0%, #8b5cf6 45%, #00a3ff 100%);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
