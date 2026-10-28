@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -120,7 +120,7 @@ export default function App() {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/70">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
           <a href="#top" className="flex items-center gap-2.5 font-semibold text-[#0A2540]">
-            <img src="/profile.jpg" alt="" className="w-8 h-8 rounded-full object-cover" />
+            <img src="profile.jpg" alt="" className="w-8 h-8 rounded-full object-cover" />
             {PROFILE_DATA.name}
           </a>
           <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600">
@@ -211,7 +211,7 @@ export default function App() {
               </div>
             </div>
             <img
-              src="/profile.jpg"
+              src="profile.jpg"
               alt={PROFILE_DATA.name}
               className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-3xl object-cover shrink-0 shadow-2xl shadow-[#635BFF]/20 ring-4 ring-white"
             />
