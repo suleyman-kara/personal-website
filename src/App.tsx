@@ -152,16 +152,26 @@ export default function App() {
             </a>
           </div>
         </div>
+        <nav className="md:hidden border-t border-slate-200/70 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex items-center gap-5 px-5 h-11 text-sm font-medium text-slate-600 whitespace-nowrap w-max">
+            {NAV.map((n) => (
+              <a key={n.id} href={`#${n.id}`} className="hover:text-[#635BFF] transition-colors">
+                {t(n.en, n.tr)}
+              </a>
+            ))}
+            <a href="#contact" className="text-[#635BFF] font-semibold">{t('Contact', 'İletişim')}</a>
+          </div>
+        </nav>
       </header>
 
       <main id="top">
         {/* HERO */}
         <section className="relative overflow-hidden">
           <div className="stripe-hero absolute inset-x-0 top-0 h-[560px] -skew-y-6 origin-top-left -translate-y-24" />
-          <div className="relative max-w-6xl mx-auto px-5 pt-20 pb-24 lg:pt-28">
+          <div className="relative max-w-6xl mx-auto px-5 pt-12 sm:pt-20 pb-16 sm:pb-24 lg:pt-28">
             <div className="flex flex-col-reverse lg:flex-row lg:items-center gap-10 lg:gap-16">
             <div className="max-w-3xl">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] text-[#0A2540]">
+              <h1 className="text-4xl min-[400px]:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] text-[#0A2540]">
                 {t('Machine learning and web products,', 'Makine öğrenmesi ve web ürünleri,')}{' '}
                 <span className="bg-gradient-to-r from-[#635BFF] to-[#00A3FF] bg-clip-text text-transparent">
                   {t('built end to end.', 'uçtan uca geliştirildi.')}
@@ -238,7 +248,7 @@ export default function App() {
         </section>
 
         {/* EXPERIENCE */}
-        <section id="experience" className="max-w-6xl mx-auto px-5 py-24 scroll-mt-16">
+        <section id="experience" className="max-w-6xl mx-auto px-5 py-16 sm:py-24 scroll-mt-28 md:scroll-mt-16">
           <SectionHeader
             eyebrow={t('Experience', 'Deneyim')}
             title={t('Where I’ve worked', 'Çalıştığım yerler')}
@@ -293,8 +303,8 @@ export default function App() {
         </section>
 
         {/* PROJECTS */}
-        <section id="projects" className="bg-slate-50 border-y border-slate-200/70 scroll-mt-16">
-          <div className="max-w-6xl mx-auto px-5 py-24">
+        <section id="projects" className="bg-slate-50 border-y border-slate-200/70 scroll-mt-28 md:scroll-mt-16">
+          <div className="max-w-6xl mx-auto px-5 py-16 sm:py-24">
             <SectionHeader
               eyebrow={t('Projects', 'Projeler')}
               title={t('Things I’ve built', 'Geliştirdiklerim')}
@@ -303,12 +313,12 @@ export default function App() {
                 'Yarışma projeleri, ürünler ve araçlar; odak alanına göre gruplandı.'
               )}
             />
-            <div className="inline-flex flex-wrap gap-1 rounded-full bg-white border border-slate-200 p-1 mb-8 shadow-sm">
+            <div className="flex flex-wrap sm:inline-flex gap-1 rounded-2xl sm:rounded-full bg-white border border-slate-200 p-1 mb-8 shadow-sm">
               {filters.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => setFilter(f.id)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-3 sm:px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                     filter === f.id ? 'bg-[#0A2540] text-white' : 'text-slate-600 hover:text-[#0A2540]'
                   }`}
                 >
@@ -319,7 +329,7 @@ export default function App() {
 
             <div className="grid lg:grid-cols-2 gap-6">
               {projects.map((p) => (
-                <article key={p.id} className={`${card} p-7 flex flex-col hover:shadow-xl hover:-translate-y-0.5 transition-all`}>
+                <article key={p.id} className={`${card} p-5 sm:p-7 flex flex-col hover:shadow-xl hover:-translate-y-0.5 transition-all`}>
                   <div className="flex items-center justify-between gap-3 text-sm">
                     {p.badge ? (
                       <span className="rounded-full bg-[#635BFF]/10 text-[#635BFF] font-medium px-3 py-1 text-xs">
@@ -328,7 +338,7 @@ export default function App() {
                     ) : <span />}
                     <span className="text-slate-400 shrink-0">{p.period[lang]}</span>
                   </div>
-                  <div className="mt-4 flex items-start justify-between gap-3">
+                  <div className="mt-4 flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
                     <h3 className="text-xl font-semibold text-[#0A2540]">{p.name}</h3>
                     <div className="flex gap-3 text-sm font-medium shrink-0">
                       {p.liveUrl && (
@@ -397,9 +407,9 @@ export default function App() {
         </section>
 
         {/* AI ENGINEERING (dark navy, Stripe-style) */}
-        <section id="ai" className="bg-[#0A2540] text-slate-300 scroll-mt-16 relative overflow-hidden">
+        <section id="ai" className="bg-[#0A2540] text-slate-300 scroll-mt-28 md:scroll-mt-16 relative overflow-hidden">
           <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#635BFF]/30 blur-3xl" />
-          <div className="relative max-w-6xl mx-auto px-5 py-24">
+          <div className="relative max-w-6xl mx-auto px-5 py-16 sm:py-24">
             <div className="max-w-2xl mb-12">
               <div className="text-sm font-semibold text-[#A29BFE] mb-3">{t('AI-assisted engineering', 'Yapay zeka destekli geliştirme')}</div>
               <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white">
@@ -421,14 +431,14 @@ export default function App() {
         </section>
 
         {/* SKILLS */}
-        <section id="skills" className="max-w-6xl mx-auto px-5 py-24 scroll-mt-16">
+        <section id="skills" className="max-w-6xl mx-auto px-5 py-16 sm:py-24 scroll-mt-28 md:scroll-mt-16">
           <SectionHeader
             eyebrow={t('Skills', 'Beceriler')}
             title={t('Technical stack', 'Teknik yetkinlikler')}
           />
           <div className="grid md:grid-cols-2 gap-5">
             {SKILL_GROUPS.map((g) => (
-              <div key={g.code} className={`${card} p-7`}>
+              <div key={g.code} className={`${card} p-5 sm:p-7`}>
                 <h3 className="font-semibold text-[#0A2540] mb-4">{g.title[lang]}</h3>
                 <div className="flex flex-wrap gap-2">
                   {g.skills.map((s) => (
@@ -441,8 +451,8 @@ export default function App() {
         </section>
 
         {/* AWARDS */}
-        <section id="awards" className="bg-slate-50 border-y border-slate-200/70 scroll-mt-16">
-          <div className="max-w-6xl mx-auto px-5 py-24">
+        <section id="awards" className="bg-slate-50 border-y border-slate-200/70 scroll-mt-28 md:scroll-mt-16">
+          <div className="max-w-6xl mx-auto px-5 py-16 sm:py-24">
             <SectionHeader
               eyebrow={t('Competitions', 'Yarışmalar')}
               title={t('Awards & events', 'Dereceler ve etkinlikler')}
@@ -465,7 +475,7 @@ export default function App() {
         </section>
 
         {/* EDUCATION & COMMUNITY */}
-        <section id="about" className="max-w-6xl mx-auto px-5 py-24 scroll-mt-16">
+        <section id="about" className="max-w-6xl mx-auto px-5 py-16 sm:py-24 scroll-mt-28 md:scroll-mt-16">
           <SectionHeader
             eyebrow={t('Background', 'Geçmiş')}
             title={t('Education & community', 'Eğitim ve topluluk')}
@@ -497,8 +507,8 @@ export default function App() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="px-5 pb-24 scroll-mt-16">
-          <div className="max-w-6xl mx-auto rounded-3xl stripe-cta text-white px-8 py-16 sm:py-20 text-center">
+        <section id="contact" className="px-5 pb-24 scroll-mt-28 md:scroll-mt-16">
+          <div className="max-w-6xl mx-auto rounded-3xl stripe-cta text-white px-5 sm:px-8 py-14 sm:py-20 text-center">
             <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">{t('Let’s work together', 'Birlikte çalışalım')}</h2>
             <p className="mt-4 text-lg text-white/80 max-w-xl mx-auto">
               {t(
@@ -507,7 +517,7 @@ export default function App() {
               )}
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <a href={`mailto:${PROFILE_DATA.email}`} className="inline-flex items-center gap-2 rounded-full bg-white text-[#0A2540] font-medium px-6 py-3 hover:bg-slate-100 transition-colors">
+              <a href={`mailto:${PROFILE_DATA.email}`} className="inline-flex items-center gap-2 rounded-full bg-white text-[#0A2540] font-medium px-5 sm:px-6 py-3 text-[13px] sm:text-base hover:bg-slate-100 transition-colors">
                 <Mail className="w-4 h-4" /> {PROFILE_DATA.email}
               </a>
               <a href={PROFILE_DATA.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/25 hover:bg-white/20 font-medium px-6 py-3 transition-colors">
