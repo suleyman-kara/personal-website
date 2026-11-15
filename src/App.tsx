@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -102,8 +102,39 @@ function SectionHeader({ eyebrow, title, desc }: { eyebrow: string; title: strin
   );
 }
 
+const LANG_KEY = 'lang';
+const isLang = (v: unknown): v is Lang => v === 'en' || v === 'tr';
+
+// Order: ?lang= in the URL, then a remembered choice, then the browser language.
+function initialLang(): Lang {
+  const fromUrl = new URLSearchParams(window.location.search).get('lang');
+  if (isLang(fromUrl)) return fromUrl;
+  try {
+    const stored = localStorage.getItem(LANG_KEY);
+    if (isLang(stored)) return stored;
+  } catch {
+    /* storage unavailable */
+  }
+  return navigator.language?.toLowerCase().startsWith('tr') ? 'tr' : 'en';
+}
+
 export default function App() {
-  const [lang, setLang] = useState<Lang>('en');
+  const [lang, setLangState] = useState<Lang>(initialLang);
+  // An explicit choice is remembered and reflected in the URL so a link keeps its language.
+  const setLang = (l: Lang) => {
+    setLangState(l);
+    try {
+      localStorage.setItem(LANG_KEY, l);
+    } catch {
+      /* storage unavailable: the choice just won't persist */
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', l);
+    window.history.replaceState(null, '', url);
+  };
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
   const [filter, setFilter] = useState<Filter>('all');
   const [copied, setCopied] = useState(false);
   const [filterTouched, setFilterTouched] = useState(false);
@@ -127,7 +158,10 @@ export default function App() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const projects = PROJECTS.filter((p) => filter === 'all' || p.category === filter);
+  // Projects with a screenshot come first so image cards share a row (sort is stable).
+  const projects = PROJECTS.filter((p) => filter === 'all' || p.category === filter).sort(
+    (a, b) => Number(!!b.image) - Number(!!a.image),
+  );
   const filters: { id: Filter; label: string }[] = [
     { id: 'all', label: t(`All (${PROJECTS.length})`, `Tümü (${PROJECTS.length})`) },
     { id: 'ml', label: t('Machine Learning', 'Makine Öğrenmesi') },
@@ -321,6 +355,23 @@ export default function App() {
                       </a>
                     )}
                   </div>
+                  {exp.image && (
+                    <a
+                      href={exp.liveUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-5 block overflow-hidden rounded-xl border border-slate-200/80 max-w-sm"
+                    >
+                      <img
+                        src={exp.image}
+                        alt={t(`${exp.company} website`, `${exp.company} web sitesi`)}
+                        loading="lazy"
+                        width={1280}
+                        height={800}
+                        className="block w-full aspect-[16/10] object-cover object-top"
+                      />
+                    </a>
+                  )}
                 </div>
                 <div className="lg:col-span-8">
                   <ul className="space-y-3 text-[15px] leading-relaxed">
@@ -384,6 +435,23 @@ export default function App() {
                   style={filterTouched ? { animationDelay: `${Math.min(i, 3) * 30}ms` } : undefined}
                   className={`${card} p-5 sm:p-7 flex flex-col ${lift} ${filterTouched ? 'filter-in' : ''}`}
                 >
+                  {p.image && (
+                    <a
+                      href={p.liveUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block -mx-5 -mt-5 sm:-mx-7 sm:-mt-7 mb-5 sm:mb-7 overflow-hidden rounded-t-2xl border-b border-slate-200/80"
+                    >
+                      <img
+                        src={p.image}
+                        alt={t(`${p.name} screenshot`, `${p.name} ekran görüntüsü`)}
+                        loading="lazy"
+                        width={1280}
+                        height={800}
+                        className="block w-full aspect-[2/1] object-cover object-top"
+                      />
+                    </a>
+                  )}
                   <div className="flex items-center justify-between gap-3 text-sm">
                     {p.badge ? (
                       <span className="rounded-full bg-[#635BFF]/10 text-[#635BFF] font-medium px-3 py-1 text-xs">

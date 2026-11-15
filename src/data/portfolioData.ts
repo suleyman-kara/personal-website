@@ -14,6 +14,8 @@ export interface ExperienceItem {
   type: BilingualText;
   repoUrl?: string;
   liveUrl?: string;
+  /** Screenshot under public/, shown on the card. */
+  image?: string;
   mentors?: BilingualText;
   bullets: {
     en: string[];
@@ -30,6 +32,8 @@ export interface ProjectItem {
   period: BilingualText;
   repoUrl?: string;
   liveUrl?: string;
+  /** Screenshot under public/, shown on the card. */
+  image?: string;
   liveLabel?: string;
   tech: string[];
   summary: BilingualText;
@@ -194,6 +198,7 @@ export const EXPERIENCES: ExperienceItem[] = [
   },
   {
     id: 'merci-insurance',
+    image: 'projects/merci-insurance.jpg',
     role: {
       en: 'Web Developer',
       tr: 'Web Geliştirici',
@@ -336,6 +341,7 @@ export const PROJECTS: ProjectItem[] = [
   },
   {
     id: 'shock-convert',
+    image: 'projects/shock-convert.jpg',
     name: 'Shock Convert',
     badge: {
       en: 'Windows Native Utility · Rust Workspace',
@@ -451,6 +457,7 @@ export const PROJECTS: ProjectItem[] = [
   },
   {
     id: 'ras-template',
+    image: 'projects/ras-template.jpg',
     name: 'RAS Template',
     badge: {
       en: 'Residential Management Web App',
