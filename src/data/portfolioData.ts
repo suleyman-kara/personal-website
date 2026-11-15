@@ -64,6 +64,8 @@ export const PROFILE_DATA = {
   linkedin: 'https://linkedin.com/in/suleymankara',
   linkedinHandle: 'linkedin.com/in/suleymankara',
   kaggle: 'https://kaggle.com/sleymankara',
+  instagram: 'https://www.instagram.com/slmnnkara',
+  youtube: 'https://www.youtube.com/@slmnkara',
   summary: {
     en: 'Third-year Computer Engineering student at Çukurova University, focused on machine learning and on building web and AI-powered applications with AI coding agents, through internships, competitions, and independent projects.',
     tr: 'Çukurova Üniversitesi 3. sınıf Bilgisayar Mühendisliği öğrencisi. Stajlar, yarışmalar ve bağımsız projeler aracılığıyla makine öğrenmesi ile yapay zeka kodlama ajanlarını (AI coding agents) kullanarak web ve AI destekli uygulamalar geliştirmeye odaklanıyor.',
@@ -283,8 +285,8 @@ export const PROJECTS: ProjectItem[] = [
     liveLabel: 'berceste-team.github.io/Su-z',
     tech: ['Arduino UNO Q', 'STM32 · C++', 'Python', 'SQLite', 'Time-Series Forecasting', 'Anomaly Detection'],
     summary: {
-      en: 'Closed-loop smart irrigation system on the Arduino UNO Q that decides on-device when and how much to water based on the remaining water budget. Built in a three-person team.',
-      tr: 'Arduino UNO Q üzerinde çalışan, ne zaman ve ne kadar sulanacağına kalan su bütçesine göre cihaz üzerinde karar veren kapalı döngülü akıllı sulama sistemi. Üç kişilik takımla geliştiriliyor.',
+      en: 'Closed-loop smart irrigation system on the Arduino UNO Q that decides on-device when and how much to water based on the remaining water budget. Built with teammates Aysima Çil and Hilal Pusa.',
+      tr: 'Arduino UNO Q üzerinde çalışan, ne zaman ve ne kadar sulanacağına kalan su bütçesine göre cihaz üzerinde karar veren kapalı döngülü akıllı sulama sistemi. Takım arkadaşlarım Aysima Çil ve Hilal Pusa ile geliştiriyoruz.',
     },
     metrics: [
       { label: { en: 'Category', tr: 'Kategori' }, value: 'AI' },
