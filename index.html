@@ -3,6 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <!-- Theme before first paint: stored choice, else the OS setting (kept in sync by src/theme.ts). -->
+    <script>
+      (function () {
+        var dark = false;
+        try {
+          var s = localStorage.getItem('theme');
+          dark = s === 'dark' || (s !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        } catch (e) {
+          try { dark = matchMedia('(prefers-color-scheme: dark)').matches; } catch (e2) {}
+        }
+        var root = document.documentElement;
+        root.classList.toggle('dark', dark);
+        root.style.colorScheme = dark ? 'dark' : 'light';
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#061527' : '#ffffff');
+      })();
+    </script>
     <title>Süleyman Kara | Computer Engineering & Machine Learning</title>
     <meta name="description" content="Third-year Computer Engineering student at Çukurova University, focused on machine learning and building web and AI-powered applications with AI coding agents." />
     <link rel="canonical" href="https://suleymankara.com/" />
@@ -25,7 +42,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </head>
-  <body class="bg-white text-slate-700 antialiased selection:bg-[#635BFF]/20">
+  <body class="bg-page text-body antialiased selection:bg-[#635BFF]/20">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -2,6 +2,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---------------------------------------------------------------- */
+/* Theme tokens (RGB channels, used by the semantic colors in        */
+/* tailwind.config.js). Light values are the original palette.       */
+/* ---------------------------------------------------------------- */
+@layer base {
+  :root {
+    --c-page: 255 255 255; /* white */
+    --c-band: 248 250 252; /* slate-50 */
+    --c-card: 255 255 255; /* white */
+    --c-chip: 241 245 249; /* slate-100 */
+    --c-pill: 255 255 255; /* white */
+    --c-line: 226 232 240; /* slate-200 */
+    --c-line-strong: 203 213 225; /* slate-300 */
+    --c-ink: 10 37 64; /* #0A2540 */
+    --c-on-ink: 255 255 255;
+    --c-strong: 30 41 59; /* slate-800 */
+    --c-body: 51 65 85; /* slate-700 */
+    --c-muted: 71 85 105; /* slate-600 */
+    --c-subtle: 100 116 139; /* slate-500 */
+    --c-faint: 148 163 184; /* slate-400 */
+    --c-accent: 99 91 255; /* #635BFF */
+    --c-feature: 10 37 64; /* #0A2540, the AI band */
+  }
+
+  /* Dark: one navy family built around #0A2540, lightest surface on top. */
+  .dark {
+    color-scheme: dark;
+    --c-page: 6 21 39; /* #061527 page */
+    --c-band: 9 28 50; /* #091C32 alternate band */
+    --c-card: 13 37 64; /* #0D2540 card */
+    --c-chip: 24 49 80; /* #183150 chips, tracks, insets */
+    --c-pill: 44 70 104; /* #2C4668 lang pill */
+    --c-line: 33 58 90; /* #213A5A */
+    --c-line-strong: 52 84 122; /* #34547A */
+    --c-ink: 240 244 250; /* #F0F4FA headings */
+    --c-on-ink: 6 21 39;
+    --c-strong: 220 228 239; /* #DCE4EF */
+    --c-body: 194 205 220; /* #C2CDDC */
+    --c-muted: 166 180 200; /* #A6B4C8 */
+    --c-subtle: 143 159 183; /* #8F9FB7 */
+    --c-faint: 128 145 171; /* #8091AB */
+    --c-accent: 166 160 255; /* #A6A0FF text accent; filled buttons stay #635BFF */
+    --c-feature: 17 27 72; /* #111B48 indigo navy, sets the AI band apart */
+  }
+}
+
 @layer utilities {
   .stripe-hero {
     overflow: hidden;
@@ -17,10 +63,37 @@
   .stripe-cta {
     background: linear-gradient(120deg, #635bff 0%, #8b5cf6 45%, #00a3ff 100%);
   }
+  /* Dark: same diagonal wash in deep jewel tones, so it glows instead of glares. */
+  .dark .stripe-hero {
+    opacity: 0.6;
+  }
+  .dark .stripe-hero::before {
+    background: linear-gradient(135deg, #4a1d6b 0%, #2f2a8f 30%, #0b4f7a 60%, #3d2f55 100%);
+  }
+  .dark .stripe-cta {
+    background: linear-gradient(120deg, #5048e5 0%, #6d3fd6 45%, #0b7fd1 100%);
+  }
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* Theme switch: freeze transitions for one frame so the page flips at once
+   (set by applyTheme in src/theme.ts). The toggle's own icon still animates. */
+.theme-switching *:not([data-theme-icon]),
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+html.dark ::selection {
+  background: rgb(99 91 255 / 0.5);
+  color: #fff;
+}
+html.dark :focus-visible {
+  outline: 2px solid rgb(var(--c-accent));
+  outline-offset: 2px;
 }
 
 /* ---------------------------------------------------------------- */
@@ -65,7 +138,7 @@ html {
   bottom: -22px;
   height: 2px;
   border-radius: 9999px;
-  background: #635bff;
+  background: rgb(var(--c-accent));
   transform: scaleX(0);
   transition: transform 300ms var(--ease-out-expo);
 }

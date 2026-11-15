@@ -26,7 +26,14 @@ interface Activity {
 }
 
 const data = activity as Activity;
-const LEVEL = ['bg-slate-100', 'bg-[#635BFF]/25', 'bg-[#635BFF]/50', 'bg-[#635BFF]/75', 'bg-[#635BFF]'];
+// Dark mode steps up from the card toward the light accent tint, so busier days read brighter.
+const LEVEL = [
+  'bg-chip',
+  'bg-[#635BFF]/25 dark:bg-[#2F3290]',
+  'bg-[#635BFF]/50 dark:bg-[#4943C4]',
+  'bg-[#635BFF]/75 dark:bg-[#6E66F2]',
+  'bg-[#635BFF] dark:bg-[#ABA6FF]',
+];
 const locale = (lang: Lang) => (lang === 'tr' ? 'tr-TR' : 'en-US');
 const utc = (iso: string) => new Date(iso.length === 10 ? `${iso}T00:00:00Z` : iso);
 
@@ -66,14 +73,14 @@ export default function GithubActivity({
       <div ref={reveal} className={`${cardClass} p-5 sm:p-7 grid lg:grid-cols-12 gap-8`}>
         <div className="lg:col-span-8 min-w-0">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-            <h3 className="font-semibold text-[#0A2540]">
+            <h3 className="font-semibold text-ink">
               {t(`${total} contributions in the last year`, `Son bir yılda ${total} katkı`)}
             </h3>
             <a
               href={profileUrl}
               target="_blank"
               rel="noreferrer"
-              className="group inline-flex items-center gap-1 text-sm font-medium text-[#635BFF] hover:underline"
+              className="group inline-flex items-center gap-1 text-sm font-medium text-accent hover:underline"
             >
               <Github className="w-4 h-4" /> GitHub
               <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -93,7 +100,7 @@ export default function GithubActivity({
             >
               {data.weeks.map((week, i) => (
                 <div key={week[0].date} className="contents">
-                  <div className="text-[10px] leading-[14px] text-slate-400 whitespace-nowrap overflow-visible">
+                  <div className="text-[10px] leading-[14px] text-faint whitespace-nowrap overflow-visible">
                     {labels[i]}
                   </div>
                   {/* The first week can start mid-week: pad so days stay on their weekday row. */}
@@ -110,7 +117,7 @@ export default function GithubActivity({
               ))}
             </div>
           </div>
-          <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-400">
+          <div className="mt-4 flex items-center gap-1.5 text-xs text-faint">
             {t('Less', 'Az')}
             {LEVEL.map((c) => (
               <span key={c} className={`w-[10px] h-[10px] rounded-[2px] ${c}`} />
@@ -121,7 +128,7 @@ export default function GithubActivity({
 
         {data.repos.length > 0 && (
           <div className="lg:col-span-4 min-w-0">
-            <div className="text-sm text-slate-500">{t('Recently updated', 'Son güncellenenler')}</div>
+            <div className="text-sm text-subtle">{t('Recently updated', 'Son güncellenenler')}</div>
             <ul className="mt-3 space-y-3 text-sm">
               {data.repos.map((r) => (
                 <li key={r.name} className="flex items-baseline justify-between gap-3">
@@ -129,11 +136,11 @@ export default function GithubActivity({
                     href={r.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="min-w-0 truncate font-medium text-[#0A2540] hover:text-[#635BFF] transition-colors"
+                    className="min-w-0 truncate font-medium text-ink hover:text-accent transition-colors"
                   >
                     {r.name}
                   </a>
-                  <span className="shrink-0 inline-flex items-center gap-2 text-slate-500">
+                  <span className="shrink-0 inline-flex items-center gap-2 text-subtle">
                     {r.language && (
                       <span className="inline-flex items-center gap-1.5">
                         <span
@@ -143,7 +150,7 @@ export default function GithubActivity({
                         {r.language}
                       </span>
                     )}
-                    <span className="text-slate-400">{shortFmt.format(utc(r.pushedAt))}</span>
+                    <span className="text-faint">{shortFmt.format(utc(r.pushedAt))}</span>
                   </span>
                 </li>
               ))}

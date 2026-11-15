@@ -13,6 +13,8 @@ import {
   GraduationCap,
   Mail,
   MapPin,
+  Moon,
+  Sun,
   Terminal,
   Trophy,
 } from 'lucide-react';
@@ -27,6 +29,7 @@ import {
 } from './data/portfolioData';
 import { reveal, useKeepActiveInView, useScrollSpy, useSlidingPill } from './motion';
 import GithubActivity from './GithubActivity';
+import { useTheme } from './theme';
 
 type Filter = 'all' | 'ml' | 'web' | 'systems';
 
@@ -76,29 +79,29 @@ const NAV = [
 const SPY_IDS = [...NAV.map((n) => n.id), 'contact'];
 
 const HIGHLIGHT_STYLES = [
-  { icon: Trophy, border: 'border-t-amber-400', iconBg: 'bg-amber-100 text-amber-600', value: 'text-amber-600' },
-  { icon: Medal, border: 'border-t-[#635BFF]', iconBg: 'bg-[#635BFF]/10 text-[#635BFF]', value: 'text-[#635BFF]' },
-  { icon: GraduationCap, border: 'border-t-sky-400', iconBg: 'bg-sky-100 text-sky-600', value: 'text-sky-600' },
-  { icon: Languages, border: 'border-t-emerald-400', iconBg: 'bg-emerald-100 text-emerald-600', value: 'text-emerald-600' },
+  { icon: Trophy, border: 'border-t-amber-400', iconBg: 'bg-amber-100 text-amber-600 dark:bg-amber-400/10 dark:text-amber-300', value: 'text-amber-600 dark:text-amber-300' },
+  { icon: Medal, border: 'border-t-[#635BFF]', iconBg: 'bg-accent/10 text-accent', value: 'text-accent' },
+  { icon: GraduationCap, border: 'border-t-sky-400', iconBg: 'bg-sky-100 text-sky-600 dark:bg-sky-400/10 dark:text-sky-300', value: 'text-sky-600 dark:text-sky-300' },
+  { icon: Languages, border: 'border-t-emerald-400', iconBg: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-300', value: 'text-emerald-600 dark:text-emerald-300' },
 ];
 
 const card =
-  'rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_5px_-1px_rgba(50,50,93,0.08),0_1px_3px_-1px_rgba(0,0,0,0.06)]';
+  'rounded-2xl bg-card border border-line/80 shadow-[0_2px_5px_-1px_rgba(50,50,93,0.08),0_1px_3px_-1px_rgba(0,0,0,0.06)] dark:shadow-none';
 // Shared hover/press polish. Lift: project-family cards. Press: primary/secondary buttons.
 const lift =
-  'transition-[transform,box-shadow] duration-200 ease-out-expo hover:-translate-y-0.5 hover:shadow-[0_13px_27px_-5px_rgba(50,50,93,0.15),0_8px_16px_-8px_rgba(0,0,0,0.1)]';
+  'transition-[transform,box-shadow] duration-200 ease-out-expo hover:-translate-y-0.5 hover:shadow-[0_13px_27px_-5px_rgba(50,50,93,0.15),0_8px_16px_-8px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_16px_32px_-12px_rgba(0,0,0,0.6)] dark:hover:border-line-strong';
 const press = 'transition-[color,background-color,border-color,transform] duration-200 ease-out-expo active:scale-[0.98]';
 const nudgeRight = 'transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5';
 const nudgeUpRight = `${nudgeRight} group-hover:-translate-y-0.5`;
 const chip =
-  'inline-flex items-center rounded-full bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1';
+  'inline-flex items-center rounded-full bg-chip text-muted text-xs font-medium px-2.5 py-1';
 
 function SectionHeader({ eyebrow, title, desc }: { eyebrow: string; title: string; desc?: string }) {
   return (
     <div ref={reveal} className="max-w-2xl mb-12">
-      <div className="text-sm font-semibold text-[#635BFF] mb-3">{eyebrow}</div>
-      <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#0A2540]">{title}</h2>
-      {desc && <p className="mt-4 text-lg text-slate-600 leading-relaxed">{desc}</p>}
+      <div className="text-sm font-semibold text-accent mb-3">{eyebrow}</div>
+      <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-ink">{title}</h2>
+      {desc && <p className="mt-4 text-lg text-muted leading-relaxed">{desc}</p>}
     </div>
   );
 }
@@ -152,6 +155,8 @@ export default function App() {
     if (id) document.getElementById(id)?.scrollIntoView({ behavior: 'instant' });
   }, []);
   const t = (en: string, tr: string) => (lang === 'en' ? en : tr);
+  const { theme, toggle: toggleTheme } = useTheme();
+  const dark = theme === 'dark';
 
   const copyEmail = () => {
     navigator.clipboard.writeText(PROFILE_DATA.email);
@@ -171,43 +176,55 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-white text-slate-700 font-sans">
+    <div className="min-h-screen bg-page text-body font-sans">
       {/* NAV */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/70">
+      <header className="sticky top-0 z-40 bg-page/80 backdrop-blur-xl border-b border-line/70">
         <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-2.5 font-semibold text-[#0A2540]">
+          <a href="#top" className="flex items-center gap-2.5 font-semibold text-ink">
             <img src="profile.jpg" alt="" className="w-8 h-8 rounded-full object-cover" />
             {PROFILE_DATA.name}
           </a>
-          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600">
+          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-muted">
             {NAV.map((n) => (
               <a
                 key={n.id}
                 href={`#${n.id}`}
                 onClick={() => selectSection(n.id)}
                 aria-current={activeSection === n.id ? 'true' : undefined}
-                className={`nav-link transition-colors ${activeSection === n.id ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'}`}
+                className={`nav-link transition-colors ${activeSection === n.id ? 'text-accent' : 'hover:text-accent'}`}
               >
                 {t(n.en, n.tr)}
               </a>
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <div ref={langPill.containerRef} className="relative inline-flex rounded-full bg-slate-100 p-0.5 text-xs font-semibold">
-              <span ref={langPill.pillRef} aria-hidden className="seg-pill absolute left-0 top-0 rounded-full bg-white shadow-sm" />
+            <div ref={langPill.containerRef} className="relative inline-flex rounded-full bg-chip p-0.5 text-xs font-semibold">
+              <span ref={langPill.pillRef} aria-hidden className="seg-pill absolute left-0 top-0 rounded-full bg-pill shadow-sm" />
               {(['en', 'tr'] as Lang[]).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
                   aria-pressed={lang === l}
                   className={`relative px-3 py-1 rounded-full transition-colors duration-300 ${
-                    lang === l ? 'text-[#0A2540]' : 'text-slate-500 hover:text-slate-800'
+                    lang === l ? 'text-ink' : 'text-subtle hover:text-strong'
                   }`}
                 >
                   {l.toUpperCase()}
                 </button>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label={dark ? t('Switch to light theme', 'Açık temaya geç') : t('Switch to dark theme', 'Koyu temaya geç')}
+              title={dark ? t('Light theme', 'Açık tema') : t('Dark theme', 'Koyu tema')}
+              className="-mx-1 inline-flex items-center justify-center w-8 h-8 rounded-full text-subtle hover:text-ink hover:bg-chip transition-colors"
+            >
+              <span className="relative w-4 h-4" aria-hidden>
+                <Moon data-theme-icon className={`absolute inset-0 w-4 h-4 transition-[opacity,transform] duration-200 ease-out-expo ${dark ? 'opacity-0 scale-50 -rotate-45' : 'opacity-100 scale-100 rotate-0'}`} />
+                <Sun data-theme-icon className={`absolute inset-0 w-4 h-4 transition-[opacity,transform] duration-200 ease-out-expo ${dark ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-45'}`} />
+              </span>
+            </button>
             <a
               href="#contact"
               className={`group hidden sm:inline-flex items-center gap-1 rounded-full bg-[#635BFF] hover:bg-[#5249e6] text-white text-sm font-medium px-4 py-2 ${press}`}
@@ -216,8 +233,8 @@ export default function App() {
             </a>
           </div>
         </div>
-        <nav ref={mobileNavRef} className="md:hidden border-t border-slate-200/70 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          <div className="flex items-center gap-5 px-5 h-11 text-sm font-medium text-slate-600 whitespace-nowrap w-max">
+        <nav ref={mobileNavRef} className="md:hidden border-t border-line/70 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex items-center gap-5 px-5 h-11 text-sm font-medium text-muted whitespace-nowrap w-max">
             {NAV.map((n) => (
               <a
                 key={n.id}
@@ -225,12 +242,12 @@ export default function App() {
                 data-spy={n.id}
                 onClick={() => selectSection(n.id)}
                 aria-current={activeSection === n.id ? 'true' : undefined}
-                className={`transition-colors ${activeSection === n.id ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'}`}
+                className={`transition-colors ${activeSection === n.id ? 'text-accent' : 'hover:text-accent'}`}
               >
                 {t(n.en, n.tr)}
               </a>
             ))}
-            <a href="#contact" data-spy="contact" onClick={() => selectSection('contact')} className="text-[#635BFF] font-semibold">{t('Contact', 'İletişim')}</a>
+            <a href="#contact" data-spy="contact" onClick={() => selectSection('contact')} className="text-accent font-semibold">{t('Contact', 'İletişim')}</a>
           </div>
         </nav>
       </header>
@@ -242,13 +259,13 @@ export default function App() {
           <div className="relative max-w-6xl mx-auto px-5 pt-12 sm:pt-20 pb-16 sm:pb-24 lg:pt-28">
             <div className="flex flex-col-reverse lg:flex-row lg:items-center gap-10 lg:gap-16">
             <div className="max-w-3xl">
-              <h1 className="hero-in text-4xl min-[400px]:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] text-[#0A2540]">
+              <h1 className="hero-in text-4xl min-[400px]:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] text-ink">
                 {t('Machine learning and web products,', 'Makine öğrenmesi ve web ürünleri,')}{' '}
-                <span className="bg-gradient-to-r from-[#635BFF] to-[#00A3FF] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#635BFF] to-[#00A3FF] dark:from-[#8F88FF] dark:to-[#3CC3FF] bg-clip-text text-transparent">
                   {t('built end to end.', 'uçtan uca geliştirildi.')}
                 </span>
               </h1>
-              <p className="hero-in mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-2xl" style={{ animationDelay: '70ms' }}>
+              <p className="hero-in mt-6 text-lg sm:text-xl text-muted leading-relaxed max-w-2xl" style={{ animationDelay: '70ms' }}>
                 {PROFILE_DATA.summary[lang]}
               </p>
               <div className="hero-in mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: '140ms' }}>
@@ -262,7 +279,7 @@ export default function App() {
                   href={PROFILE_DATA.linkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className={`group inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 text-[#0A2540] font-medium px-6 py-3 shadow-sm ${press}`}
+                  className={`group inline-flex items-center gap-1.5 rounded-full bg-card border border-line hover:border-line-strong text-ink font-medium px-6 py-3 shadow-sm ${press}`}
                 >
                   <Linkedin className="w-4 h-4" /> LinkedIn <ArrowUpRight className={`w-4 h-4 ${nudgeUpRight}`} />
                 </a>
@@ -270,13 +287,13 @@ export default function App() {
                   href={PROFILE_DATA.github}
                   target="_blank"
                   rel="noreferrer"
-                  className={`group inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 text-[#0A2540] font-medium px-6 py-3 shadow-sm ${press}`}
+                  className={`group inline-flex items-center gap-1.5 rounded-full bg-card border border-line hover:border-line-strong text-ink font-medium px-6 py-3 shadow-sm ${press}`}
                 >
                   <Github className="w-4 h-4" /> GitHub <ArrowUpRight className={`w-4 h-4 ${nudgeUpRight}`} />
                 </a>
                 <button
                   onClick={copyEmail}
-                  className="inline-flex items-center gap-2 rounded-full text-slate-600 hover:text-[#635BFF] text-sm font-medium px-3 py-3 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-full text-muted hover:text-accent text-sm font-medium px-3 py-3 transition-colors"
                 >
                   <span className="relative w-4 h-4" aria-hidden>
                     <Copy className={`absolute inset-0 w-4 h-4 transition-[opacity,transform] duration-200 ease-out-expo ${copied ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`} />
@@ -285,7 +302,7 @@ export default function App() {
                   {copied ? t('Copied!', 'Kopyalandı!') : PROFILE_DATA.email}
                 </button>
               </div>
-              <div className="hero-in mt-8 flex flex-wrap gap-5 text-sm text-slate-500" style={{ animationDelay: '210ms' }}>
+              <div className="hero-in mt-8 flex flex-wrap gap-5 text-sm text-subtle" style={{ animationDelay: '210ms' }}>
                 <span className="inline-flex items-center gap-1.5">
                   <MapPin className="w-4 h-4" /> {PROFILE_DATA.location[lang]}
                 </span>
@@ -298,7 +315,7 @@ export default function App() {
               src="profile.jpg"
               alt={PROFILE_DATA.name}
               style={{ animationDelay: '100ms' }}
-              className="hero-in w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-3xl object-cover shrink-0 shadow-2xl shadow-[#635BFF]/20 ring-4 ring-white"
+              className="hero-in w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-3xl object-cover shrink-0 shadow-2xl shadow-[#635BFF]/20 ring-4 ring-card"
             />
             </div>
 
@@ -313,8 +330,8 @@ export default function App() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <div className={`mt-5 text-3xl font-semibold tracking-tight ${s.value}`}>{m.value}</div>
-                    <div className="mt-2 text-sm font-semibold text-slate-800">{m.label[lang]}</div>
-                    <div className="mt-1 text-sm text-slate-500">{m.sub[lang]}</div>
+                    <div className="mt-2 text-sm font-semibold text-strong">{m.label[lang]}</div>
+                    <div className="mt-1 text-sm text-subtle">{m.sub[lang]}</div>
                   </div>
                 );
               })}
@@ -336,22 +353,22 @@ export default function App() {
             {EXPERIENCES.map((exp) => (
               <article key={exp.id} ref={reveal} className={`${card} p-6 sm:p-8 grid lg:grid-cols-12 gap-6`}>
                 <div className="lg:col-span-4">
-                  <div className="text-sm text-slate-500">{exp.period[lang]}</div>
-                  <h3 className="mt-2 text-xl font-semibold text-[#0A2540]">{exp.role[lang]}</h3>
-                  <div className="text-[#635BFF] font-medium">{exp.company}</div>
+                  <div className="text-sm text-subtle">{exp.period[lang]}</div>
+                  <h3 className="mt-2 text-xl font-semibold text-ink">{exp.role[lang]}</h3>
+                  <div className="text-accent font-medium">{exp.company}</div>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <span className={chip}>{exp.type[lang]}</span>
                     <span className={chip}>{exp.location[lang]}</span>
                   </div>
-                  {exp.mentors && <p className="mt-3 text-sm text-slate-500">{exp.mentors[lang]}</p>}
+                  {exp.mentors && <p className="mt-3 text-sm text-subtle">{exp.mentors[lang]}</p>}
                   <div className="mt-4 flex flex-wrap gap-4 text-sm font-medium">
                     {exp.liveUrl && (
-                      <a href={exp.liveUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#635BFF] hover:underline">
+                      <a href={exp.liveUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
                         <Globe className="w-4 h-4" /> {t('Live site', 'Canlı site')}
                       </a>
                     )}
                     {exp.repoUrl && (
-                      <a href={exp.repoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#635BFF] hover:underline">
+                      <a href={exp.repoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
                         <Github className="w-4 h-4" /> Repo
                       </a>
                     )}
@@ -361,7 +378,7 @@ export default function App() {
                       href={exp.liveUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-5 block overflow-hidden rounded-xl border border-slate-200/80 max-w-sm"
+                      className="mt-5 block overflow-hidden rounded-xl border border-line/80 max-w-sm"
                     >
                       <img
                         src={exp.image}
@@ -378,7 +395,7 @@ export default function App() {
                   <ul className="space-y-3 text-[15px] leading-relaxed">
                     {exp.bullets[lang].map((b, i) => (
                       <li key={i} className="flex gap-3">
-                        <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[#635BFF] shrink-0" />
+                        <span className="mt-2 w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
                         <span>{b}</span>
                       </li>
                     ))}
@@ -395,7 +412,7 @@ export default function App() {
         </section>
 
         {/* PROJECTS */}
-        <section id="projects" className="bg-slate-50 border-y border-slate-200/70 scroll-mt-28 md:scroll-mt-16">
+        <section id="projects" className="bg-band border-y border-line/70 scroll-mt-28 md:scroll-mt-16">
           <div className="max-w-6xl mx-auto px-5 py-16 sm:py-24">
             <SectionHeader
               eyebrow={t('Projects', 'Projeler')}
@@ -406,8 +423,8 @@ export default function App() {
               )}
             />
             <div ref={reveal}>
-            <div ref={filterPill.containerRef} className="relative flex flex-wrap sm:inline-flex gap-1 rounded-2xl sm:rounded-full bg-white border border-slate-200 p-1 mb-8 shadow-sm">
-              <span ref={filterPill.pillRef} aria-hidden className="seg-pill absolute left-0 top-0 rounded-full bg-[#0A2540]" />
+            <div ref={filterPill.containerRef} className="relative flex flex-wrap sm:inline-flex gap-1 rounded-2xl sm:rounded-full bg-card border border-line p-1 mb-8 shadow-sm dark:shadow-none">
+              <span ref={filterPill.pillRef} aria-hidden className="seg-pill absolute left-0 top-0 rounded-full bg-ink" />
               {filters.map((f) => (
                 <button
                   key={f.id}
@@ -418,7 +435,7 @@ export default function App() {
                   }}
                   aria-pressed={filter === f.id}
                   className={`relative px-3 sm:px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
-                    filter === f.id ? 'text-white' : 'text-slate-600 hover:text-[#0A2540]'
+                    filter === f.id ? 'text-on-ink' : 'text-muted hover:text-ink'
                   }`}
                 >
                   {f.label}
@@ -441,7 +458,7 @@ export default function App() {
                       href={p.liveUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="block -mx-5 -mt-5 sm:-mx-7 sm:-mt-7 mb-5 sm:mb-7 overflow-hidden rounded-t-2xl border-b border-slate-200/80"
+                      className="block -mx-5 -mt-5 sm:-mx-7 sm:-mt-7 mb-5 sm:mb-7 overflow-hidden rounded-t-2xl border-b border-line/80"
                     >
                       <img
                         src={p.image}
@@ -455,35 +472,35 @@ export default function App() {
                   )}
                   <div className="flex items-center justify-between gap-3 text-sm">
                     {p.badge ? (
-                      <span className="rounded-full bg-[#635BFF]/10 text-[#635BFF] font-medium px-3 py-1 text-xs">
+                      <span className="rounded-full bg-accent/10 text-accent font-medium px-3 py-1 text-xs">
                         {p.badge[lang]}
                       </span>
                     ) : <span />}
-                    <span className="text-slate-400 shrink-0">{p.period[lang]}</span>
+                    <span className="text-faint shrink-0">{p.period[lang]}</span>
                   </div>
                   <div className="mt-4 flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
-                    <h3 className="text-xl font-semibold text-[#0A2540]">{p.name}</h3>
+                    <h3 className="text-xl font-semibold text-ink">{p.name}</h3>
                     <div className="flex gap-3 text-sm font-medium shrink-0">
                       {p.liveUrl && (
-                        <a href={p.liveUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#635BFF] hover:underline">
+                        <a href={p.liveUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
                           <Globe className="w-4 h-4" /> {t('Live', 'Canlı')}
                         </a>
                       )}
                       {p.repoUrl && (
-                        <a href={p.repoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#635BFF] hover:underline">
+                        <a href={p.repoUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:underline">
                           <Github className="w-4 h-4" /> GitHub
                         </a>
                       )}
                     </div>
                   </div>
-                  <p className="mt-3 text-[15px] leading-relaxed text-slate-600">{p.summary[lang]}</p>
+                  <p className="mt-3 text-[15px] leading-relaxed text-muted">{p.summary[lang]}</p>
 
                   {p.metrics && (
-                    <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl bg-slate-50 p-4">
+                    <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl bg-band p-4">
                       {p.metrics.map((m, i) => (
                         <div key={i}>
-                          <div className="text-xs text-slate-500">{m.label[lang]}</div>
-                          <div className="mt-0.5 font-semibold text-[#0A2540]">{m.value}</div>
+                          <div className="text-xs text-subtle">{m.label[lang]}</div>
+                          <div className="mt-0.5 font-semibold text-ink">{m.value}</div>
                         </div>
                       ))}
                     </div>
@@ -492,15 +509,15 @@ export default function App() {
                   <ul className="mt-5 space-y-2.5 text-sm leading-relaxed">
                     {p.bullets[lang].map((b, i) => (
                       <li key={i} className="flex gap-3">
-                        <span className="mt-2 w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0" />
+                        <span className="mt-2 w-1.5 h-1.5 rounded-full bg-line-strong shrink-0" />
                         <span>{b}</span>
                       </li>
                     ))}
                   </ul>
 
                   {p.agentNote && (
-                    <div className="mt-5 flex gap-2.5 rounded-xl bg-[#635BFF]/5 text-sm text-slate-700 p-3.5">
-                      <Terminal className="w-4 h-4 text-[#635BFF] shrink-0 mt-0.5" />
+                    <div className="mt-5 flex gap-2.5 rounded-xl bg-accent/5 text-sm text-body p-3.5">
+                      <Terminal className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                       <span>{p.agentNote[lang]}</span>
                     </div>
                   )}
@@ -514,15 +531,15 @@ export default function App() {
               ))}
             </div>
 
-            <h3 ref={reveal} className="mt-16 mb-5 text-lg font-semibold text-[#0A2540]">
+            <h3 ref={reveal} className="mt-16 mb-5 text-lg font-semibold text-ink">
               {t('Smaller projects', 'Diğer küçük projeler')}
             </h3>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {MINI_PROJECTS.map((m) => (
                 <div key={m.name} ref={reveal} className={`${card} p-5 ${lift}`}>
-                  <div className="text-xs font-medium text-[#635BFF]">{m.tech}</div>
-                  <div className="mt-1.5 font-semibold text-[#0A2540]">{m.name}</div>
-                  <p className="mt-2 text-sm text-slate-600 leading-relaxed">{m.desc[lang]}</p>
+                  <div className="text-xs font-medium text-accent">{m.tech}</div>
+                  <div className="mt-1.5 font-semibold text-ink">{m.name}</div>
+                  <p className="mt-2 text-sm text-muted leading-relaxed">{m.desc[lang]}</p>
                 </div>
               ))}
             </div>
@@ -530,7 +547,7 @@ export default function App() {
         </section>
 
         {/* AI ENGINEERING (dark navy, Stripe-style) */}
-        <section id="ai" className="bg-[#0A2540] text-slate-300 scroll-mt-28 md:scroll-mt-16 relative overflow-hidden">
+        <section id="ai" className="bg-feature text-slate-300 dark:border-y dark:border-white/[0.06] scroll-mt-28 md:scroll-mt-16 relative overflow-hidden">
           <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#635BFF]/30 blur-3xl" />
           <div className="relative max-w-6xl mx-auto px-5 py-16 sm:py-24">
             <div ref={reveal} className="max-w-2xl mb-12">
@@ -562,7 +579,7 @@ export default function App() {
           <div className="grid md:grid-cols-2 gap-5">
             {SKILL_GROUPS.map((g) => (
               <div key={g.code} ref={reveal} className={`${card} p-5 sm:p-7`}>
-                <h3 className="font-semibold text-[#0A2540] mb-4">{g.title[lang]}</h3>
+                <h3 className="font-semibold text-ink mb-4">{g.title[lang]}</h3>
                 <div className="flex flex-wrap gap-2">
                   {g.skills.map((s) => (
                     <span key={s} className={chip}>{s}</span>
@@ -576,7 +593,7 @@ export default function App() {
         <GithubActivity lang={lang} profileUrl={PROFILE_DATA.github} cardClass={card} />
 
         {/* AWARDS */}
-        <section id="awards" className="bg-slate-50 border-y border-slate-200/70 scroll-mt-28 md:scroll-mt-16">
+        <section id="awards" className="bg-band border-y border-line/70 scroll-mt-28 md:scroll-mt-16">
           <div className="max-w-6xl mx-auto px-5 py-16 sm:py-24">
             <SectionHeader
               eyebrow={t('Competitions', 'Yarışmalar')}
@@ -584,14 +601,14 @@ export default function App() {
             />
             <div className="grid md:grid-cols-2 gap-5">
               {COMPETITIONS.map((c, i) => (
-                <div key={i} ref={reveal} className={`${card} p-6 flex gap-4 ${c.highlight ? 'ring-1 ring-[#635BFF]/30' : ''}`}>
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${c.highlight ? 'bg-[#635BFF] text-white' : 'bg-slate-100 text-slate-500'}`}>
+                <div key={i} ref={reveal} className={`${card} p-6 flex gap-4 ${c.highlight ? 'ring-1 ring-accent/30' : ''}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${c.highlight ? 'bg-[#635BFF] text-white' : 'bg-chip text-subtle'}`}>
                     {c.highlight ? <Trophy className="w-5 h-5" /> : <Award className="w-5 h-5" />}
                   </div>
                   <div>
-                    <div className="text-sm text-slate-500">{typeof c.date === 'string' ? c.date : c.date[lang]}</div>
-                    <h3 className="mt-1 font-semibold text-[#0A2540] leading-snug">{c.title[lang]}</h3>
-                    <p className="mt-1.5 text-sm text-slate-600">{c.result[lang]}</p>
+                    <div className="text-sm text-subtle">{typeof c.date === 'string' ? c.date : c.date[lang]}</div>
+                    <h3 className="mt-1 font-semibold text-ink leading-snug">{c.title[lang]}</h3>
+                    <p className="mt-1.5 text-sm text-muted">{c.result[lang]}</p>
                   </div>
                 </div>
               ))}
@@ -607,25 +624,25 @@ export default function App() {
           />
           <div className="grid md:grid-cols-3 gap-5">
             <div ref={reveal} className={`${card} p-7`}>
-              <div className="text-sm text-slate-500">{t('Education', 'Eğitim')}</div>
-              <h3 className="mt-2 text-lg font-semibold text-[#0A2540]">{PROFILE_DATA.education.school[lang]}</h3>
-              <p className="text-[#635BFF] font-medium text-sm">{PROFILE_DATA.education.degree[lang]}</p>
-              <p className="mt-3 text-sm text-slate-500">{PROFILE_DATA.education.period[lang]}</p>
-              <p className="mt-1 text-sm font-medium text-slate-800">GPA {PROFILE_DATA.education.gpa}</p>
+              <div className="text-sm text-subtle">{t('Education', 'Eğitim')}</div>
+              <h3 className="mt-2 text-lg font-semibold text-ink">{PROFILE_DATA.education.school[lang]}</h3>
+              <p className="text-accent font-medium text-sm">{PROFILE_DATA.education.degree[lang]}</p>
+              <p className="mt-3 text-sm text-subtle">{PROFILE_DATA.education.period[lang]}</p>
+              <p className="mt-1 text-sm font-medium text-strong">GPA {PROFILE_DATA.education.gpa}</p>
             </div>
             <div ref={reveal} className={`${card} p-7`}>
-              <div className="text-sm text-slate-500">{t('Languages', 'Diller')}</div>
+              <div className="text-sm text-subtle">{t('Languages', 'Diller')}</div>
               <ul className="mt-3 space-y-3 text-sm">
-                <li className="flex justify-between"><span>{t('Turkish', 'Türkçe')}</span><span className="font-medium text-[#0A2540]">{t('Native', 'Ana dil')}</span></li>
-                <li className="flex justify-between"><span>{t('English', 'İngilizce')}</span><span className="font-medium text-[#0A2540]">C1</span></li>
+                <li className="flex justify-between"><span>{t('Turkish', 'Türkçe')}</span><span className="font-medium text-ink">{t('Native', 'Ana dil')}</span></li>
+                <li className="flex justify-between"><span>{t('English', 'İngilizce')}</span><span className="font-medium text-ink">C1</span></li>
               </ul>
             </div>
             <div ref={reveal} className={`${card} p-7`}>
-              <div className="text-sm text-slate-500">{t('Community', 'Topluluk')}</div>
+              <div className="text-sm text-subtle">{t('Community', 'Topluluk')}</div>
               <ul className="mt-3 space-y-3 text-sm">
-                <li className="flex justify-between gap-3"><span>CENGA</span><span className="font-medium text-[#0A2540] text-right">{t('Social Events Coordinator', 'Sosyal Etkinlikler Koordinatörü')}</span></li>
-                <li className="flex justify-between gap-3"><span>TEMA</span><span className="font-medium text-[#0A2540] text-right">{t('Volunteer (5 yrs, passive)', 'Gönüllü (5 yıl, pasif)')}</span></li>
-                <li className="flex justify-between gap-3"><span>Kaggle</span><a href={PROFILE_DATA.kaggle} target="_blank" rel="noreferrer" className="font-medium text-[#635BFF] hover:underline">@sleymankara</a></li>
+                <li className="flex justify-between gap-3"><span>CENGA</span><span className="font-medium text-ink text-right">{t('Social Events Coordinator', 'Sosyal Etkinlikler Koordinatörü')}</span></li>
+                <li className="flex justify-between gap-3"><span>TEMA</span><span className="font-medium text-ink text-right">{t('Volunteer (5 yrs, passive)', 'Gönüllü (5 yıl, pasif)')}</span></li>
+                <li className="flex justify-between gap-3"><span>Kaggle</span><a href={PROFILE_DATA.kaggle} target="_blank" rel="noreferrer" className="font-medium text-accent hover:underline">@sleymankara</a></li>
               </ul>
             </div>
           </div>
@@ -656,13 +673,13 @@ export default function App() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200/70">
-        <div className="max-w-6xl mx-auto px-5 py-8 text-sm text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <footer className="border-t border-line/70">
+        <div className="max-w-6xl mx-auto px-5 py-8 text-sm text-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
           <span>© 2026 {PROFILE_DATA.name}</span>
           <div className="flex gap-5">
-            <a href={PROFILE_DATA.github} target="_blank" rel="noreferrer" className="hover:text-[#635BFF]">GitHub</a>
-            <a href={PROFILE_DATA.linkedin} target="_blank" rel="noreferrer" className="hover:text-[#635BFF]">LinkedIn</a>
-            <a href={PROFILE_DATA.kaggle} target="_blank" rel="noreferrer" className="hover:text-[#635BFF]">Kaggle</a>
+            <a href={PROFILE_DATA.github} target="_blank" rel="noreferrer" className="hover:text-accent">GitHub</a>
+            <a href={PROFILE_DATA.linkedin} target="_blank" rel="noreferrer" className="hover:text-accent">LinkedIn</a>
+            <a href={PROFILE_DATA.kaggle} target="_blank" rel="noreferrer" className="hover:text-accent">Kaggle</a>
           </div>
         </div>
       </footer>

@@ -7,18 +7,13 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        cf: {
-          orange: '#F6821F',
-          amber: '#FBAD41',
-          dark: '#0A0A0B',
-          card: '#111215',
-          border: '#22242A',
-          lightBg: '#F9FAFB',
-          lightCard: '#FFFFFF',
-          lightBorder: '#E5E7EB',
-        }
-      },
+      // Semantic theme colors. Values live in src/index.css as RGB channels
+      // (:root = light, .dark = dark) so opacity modifiers like border-line/70 work.
+      colors: Object.fromEntries(
+        ['page', 'band', 'card', 'chip', 'pill', 'line', 'line-strong', 'ink', 'on-ink', 'strong', 'body', 'muted', 'subtle', 'faint', 'accent', 'feature'].map(
+          (name) => [name, `rgb(var(--c-${name}) / <alpha-value>)`]
+        )
+      ),
       transitionTimingFunction: {
         'out-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
