@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -25,6 +25,7 @@ import {
   SKILL_GROUPS,
   COMPETITIONS,
 } from './data/portfolioData';
+import { reveal, useKeepActiveInView, useScrollSpy, useSlidingPill } from './motion';
 
 type Filter = 'all' | 'ml' | 'web' | 'systems';
 
@@ -71,6 +72,7 @@ const NAV = [
   { id: 'awards', en: 'Awards', tr: 'Dereceler' },
   { id: 'about', en: 'Education', tr: 'Eğitim' },
 ];
+const SPY_IDS = [...NAV.map((n) => n.id), 'contact'];
 
 const HIGHLIGHT_STYLES = [
   { icon: Trophy, border: 'border-t-amber-400', iconBg: 'bg-amber-100 text-amber-600', value: 'text-amber-600' },
@@ -81,12 +83,18 @@ const HIGHLIGHT_STYLES = [
 
 const card =
   'rounded-2xl bg-white border border-slate-200/80 shadow-[0_2px_5px_-1px_rgba(50,50,93,0.08),0_1px_3px_-1px_rgba(0,0,0,0.06)]';
+// Shared hover/press polish. Lift: project-family cards. Press: primary/secondary buttons.
+const lift =
+  'transition-[transform,box-shadow] duration-200 ease-out-expo hover:-translate-y-0.5 hover:shadow-[0_13px_27px_-5px_rgba(50,50,93,0.15),0_8px_16px_-8px_rgba(0,0,0,0.1)]';
+const press = 'transition-[color,background-color,border-color,transform] duration-200 ease-out-expo active:scale-[0.98]';
+const nudgeRight = 'transition-transform duration-200 ease-out-expo group-hover:translate-x-0.5';
+const nudgeUpRight = `${nudgeRight} group-hover:-translate-y-0.5`;
 const chip =
   'inline-flex items-center rounded-full bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-1';
 
 function SectionHeader({ eyebrow, title, desc }: { eyebrow: string; title: string; desc?: string }) {
   return (
-    <div className="max-w-2xl mb-12">
+    <div ref={reveal} className="max-w-2xl mb-12">
       <div className="text-sm font-semibold text-[#635BFF] mb-3">{eyebrow}</div>
       <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#0A2540]">{title}</h2>
       {desc && <p className="mt-4 text-lg text-slate-600 leading-relaxed">{desc}</p>}
@@ -98,6 +106,19 @@ export default function App() {
   const [lang, setLang] = useState<Lang>('en');
   const [filter, setFilter] = useState<Filter>('all');
   const [copied, setCopied] = useState(false);
+  const [filterTouched, setFilterTouched] = useState(false);
+  const { active: activeSection, select: selectSection } = useScrollSpy(SPY_IDS);
+  const mobileNavRef = useRef<HTMLElement>(null);
+  useKeepActiveInView(mobileNavRef, activeSection);
+  const langPill = useSlidingPill<HTMLDivElement>(lang);
+  const filterPill = useSlidingPill<HTMLDivElement>(filter);
+
+  // The page renders client-side, so the browser's own jump to a URL hash (e.g. /#awards)
+  // happens before the target exists. Jump once after mount.
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (id) document.getElementById(id)?.scrollIntoView({ behavior: 'instant' });
+  }, []);
   const t = (en: string, tr: string) => (lang === 'en' ? en : tr);
 
   const copyEmail = () => {
@@ -125,19 +146,27 @@ export default function App() {
           </a>
           <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-slate-600">
             {NAV.map((n) => (
-              <a key={n.id} href={`#${n.id}`} className="hover:text-[#635BFF] transition-colors">
+              <a
+                key={n.id}
+                href={`#${n.id}`}
+                onClick={() => selectSection(n.id)}
+                aria-current={activeSection === n.id ? 'true' : undefined}
+                className={`nav-link transition-colors ${activeSection === n.id ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'}`}
+              >
                 {t(n.en, n.tr)}
               </a>
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <div className="inline-flex rounded-full bg-slate-100 p-0.5 text-xs font-semibold">
+            <div ref={langPill.containerRef} className="relative inline-flex rounded-full bg-slate-100 p-0.5 text-xs font-semibold">
+              <span ref={langPill.pillRef} aria-hidden className="seg-pill absolute left-0 top-0 rounded-full bg-white shadow-sm" />
               {(['en', 'tr'] as Lang[]).map((l) => (
                 <button
                   key={l}
                   onClick={() => setLang(l)}
-                  className={`px-3 py-1 rounded-full transition-colors ${
-                    lang === l ? 'bg-white text-[#0A2540] shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  aria-pressed={lang === l}
+                  className={`relative px-3 py-1 rounded-full transition-colors duration-300 ${
+                    lang === l ? 'text-[#0A2540]' : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
                   {l.toUpperCase()}
@@ -146,20 +175,27 @@ export default function App() {
             </div>
             <a
               href="#contact"
-              className="hidden sm:inline-flex items-center gap-1 rounded-full bg-[#635BFF] hover:bg-[#5249e6] text-white text-sm font-medium px-4 py-2 transition-colors"
+              className={`group hidden sm:inline-flex items-center gap-1 rounded-full bg-[#635BFF] hover:bg-[#5249e6] text-white text-sm font-medium px-4 py-2 ${press}`}
             >
-              {t('Contact', 'İletişim')} <ArrowRight className="w-4 h-4" />
+              {t('Contact', 'İletişim')} <ArrowRight className={`w-4 h-4 ${nudgeRight}`} />
             </a>
           </div>
         </div>
-        <nav className="md:hidden border-t border-slate-200/70 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav ref={mobileNavRef} className="md:hidden border-t border-slate-200/70 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex items-center gap-5 px-5 h-11 text-sm font-medium text-slate-600 whitespace-nowrap w-max">
             {NAV.map((n) => (
-              <a key={n.id} href={`#${n.id}`} className="hover:text-[#635BFF] transition-colors">
+              <a
+                key={n.id}
+                href={`#${n.id}`}
+                data-spy={n.id}
+                onClick={() => selectSection(n.id)}
+                aria-current={activeSection === n.id ? 'true' : undefined}
+                className={`transition-colors ${activeSection === n.id ? 'text-[#635BFF]' : 'hover:text-[#635BFF]'}`}
+              >
                 {t(n.en, n.tr)}
               </a>
             ))}
-            <a href="#contact" className="text-[#635BFF] font-semibold">{t('Contact', 'İletişim')}</a>
+            <a href="#contact" data-spy="contact" onClick={() => selectSection('contact')} className="text-[#635BFF] font-semibold">{t('Contact', 'İletişim')}</a>
           </div>
         </nav>
       </header>
@@ -171,47 +207,50 @@ export default function App() {
           <div className="relative max-w-6xl mx-auto px-5 pt-12 sm:pt-20 pb-16 sm:pb-24 lg:pt-28">
             <div className="flex flex-col-reverse lg:flex-row lg:items-center gap-10 lg:gap-16">
             <div className="max-w-3xl">
-              <h1 className="text-4xl min-[400px]:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] text-[#0A2540]">
+              <h1 className="hero-in text-4xl min-[400px]:text-5xl sm:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] text-[#0A2540]">
                 {t('Machine learning and web products,', 'Makine öğrenmesi ve web ürünleri,')}{' '}
                 <span className="bg-gradient-to-r from-[#635BFF] to-[#00A3FF] bg-clip-text text-transparent">
                   {t('built end to end.', 'uçtan uca geliştirildi.')}
                 </span>
               </h1>
-              <p className="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-2xl">
+              <p className="hero-in mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-2xl" style={{ animationDelay: '70ms' }}>
                 {PROFILE_DATA.summary[lang]}
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-3">
+              <div className="hero-in mt-8 flex flex-wrap items-center gap-3" style={{ animationDelay: '140ms' }}>
                 <a
                   href="#projects"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#635BFF] hover:bg-[#5249e6] text-white font-medium px-6 py-3 shadow-lg shadow-[#635BFF]/25 transition-colors"
+                  className={`group inline-flex items-center gap-2 rounded-full bg-[#635BFF] hover:bg-[#5249e6] text-white font-medium px-6 py-3 shadow-lg shadow-[#635BFF]/25 ${press}`}
                 >
-                  {t('View projects', 'Projeleri gör')} <ArrowRight className="w-4 h-4" />
+                  {t('View projects', 'Projeleri gör')} <ArrowRight className={`w-4 h-4 ${nudgeRight}`} />
                 </a>
                 <a
                   href={PROFILE_DATA.linkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 text-[#0A2540] font-medium px-6 py-3 shadow-sm transition-colors"
+                  className={`group inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 text-[#0A2540] font-medium px-6 py-3 shadow-sm ${press}`}
                 >
-                  <Linkedin className="w-4 h-4" /> LinkedIn <ArrowUpRight className="w-4 h-4" />
+                  <Linkedin className="w-4 h-4" /> LinkedIn <ArrowUpRight className={`w-4 h-4 ${nudgeUpRight}`} />
                 </a>
                 <a
                   href={PROFILE_DATA.github}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 text-[#0A2540] font-medium px-6 py-3 shadow-sm transition-colors"
+                  className={`group inline-flex items-center gap-1.5 rounded-full bg-white border border-slate-200 hover:border-slate-300 text-[#0A2540] font-medium px-6 py-3 shadow-sm ${press}`}
                 >
-                  <Github className="w-4 h-4" /> GitHub <ArrowUpRight className="w-4 h-4" />
+                  <Github className="w-4 h-4" /> GitHub <ArrowUpRight className={`w-4 h-4 ${nudgeUpRight}`} />
                 </a>
                 <button
                   onClick={copyEmail}
                   className="inline-flex items-center gap-2 rounded-full text-slate-600 hover:text-[#635BFF] text-sm font-medium px-3 py-3 transition-colors"
                 >
-                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                  <span className="relative w-4 h-4" aria-hidden>
+                    <Copy className={`absolute inset-0 w-4 h-4 transition-[opacity,transform] duration-200 ease-out-expo ${copied ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`} />
+                    <Check className={`absolute inset-0 w-4 h-4 text-emerald-500 transition-[opacity,transform] duration-200 ease-out-expo ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`} />
+                  </span>
                   {copied ? t('Copied!', 'Kopyalandı!') : PROFILE_DATA.email}
                 </button>
               </div>
-              <div className="mt-8 flex flex-wrap gap-5 text-sm text-slate-500">
+              <div className="hero-in mt-8 flex flex-wrap gap-5 text-sm text-slate-500" style={{ animationDelay: '210ms' }}>
                 <span className="inline-flex items-center gap-1.5">
                   <MapPin className="w-4 h-4" /> {PROFILE_DATA.location[lang]}
                 </span>
@@ -223,7 +262,8 @@ export default function App() {
             <img
               src="profile.jpg"
               alt={PROFILE_DATA.name}
-              className="w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-3xl object-cover shrink-0 shadow-2xl shadow-[#635BFF]/20 ring-4 ring-white"
+              style={{ animationDelay: '100ms' }}
+              className="hero-in w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-3xl object-cover shrink-0 shadow-2xl shadow-[#635BFF]/20 ring-4 ring-white"
             />
             </div>
 
@@ -233,7 +273,7 @@ export default function App() {
                 const s = HIGHLIGHT_STYLES[i % HIGHLIGHT_STYLES.length];
                 const Icon = s.icon;
                 return (
-                  <div key={m.code} className={`${card} p-6 border-t-4 ${s.border}`}>
+                  <div key={m.code} className={`hero-in ${card} p-6 border-t-4 ${s.border}`} style={{ animationDelay: `${280 + i * 50}ms` }}>
                     <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${s.iconBg}`}>
                       <Icon className="w-5 h-5" />
                     </div>
@@ -259,7 +299,7 @@ export default function App() {
           />
           <div className="space-y-5">
             {EXPERIENCES.map((exp) => (
-              <article key={exp.id} className={`${card} p-6 sm:p-8 grid lg:grid-cols-12 gap-6`}>
+              <article key={exp.id} ref={reveal} className={`${card} p-6 sm:p-8 grid lg:grid-cols-12 gap-6`}>
                 <div className="lg:col-span-4">
                   <div className="text-sm text-slate-500">{exp.period[lang]}</div>
                   <h3 className="mt-2 text-xl font-semibold text-[#0A2540]">{exp.role[lang]}</h3>
@@ -313,23 +353,37 @@ export default function App() {
                 'Yarışma projeleri, ürünler ve araçlar; odak alanına göre gruplandı.'
               )}
             />
-            <div className="flex flex-wrap sm:inline-flex gap-1 rounded-2xl sm:rounded-full bg-white border border-slate-200 p-1 mb-8 shadow-sm">
+            <div ref={reveal}>
+            <div ref={filterPill.containerRef} className="relative flex flex-wrap sm:inline-flex gap-1 rounded-2xl sm:rounded-full bg-white border border-slate-200 p-1 mb-8 shadow-sm">
+              <span ref={filterPill.pillRef} aria-hidden className="seg-pill absolute left-0 top-0 rounded-full bg-[#0A2540]" />
               {filters.map((f) => (
                 <button
                   key={f.id}
-                  onClick={() => setFilter(f.id)}
-                  className={`px-3 sm:px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    filter === f.id ? 'bg-[#0A2540] text-white' : 'text-slate-600 hover:text-[#0A2540]'
+                  onClick={() => {
+                    if (f.id === filter) return;
+                    setFilter(f.id);
+                    setFilterTouched(true);
+                  }}
+                  aria-pressed={filter === f.id}
+                  className={`relative px-3 sm:px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
+                    filter === f.id ? 'text-white' : 'text-slate-600 hover:text-[#0A2540]'
                   }`}
                 >
                   {f.label}
                 </button>
               ))}
             </div>
+            </div>
 
-            <div className="grid lg:grid-cols-2 gap-6">
-              {projects.map((p) => (
-                <article key={p.id} className={`${card} p-5 sm:p-7 flex flex-col hover:shadow-xl hover:-translate-y-0.5 transition-all`}>
+            {/* Keyed by filter so a filter change re-mounts the cards with a quick fade-in. */}
+            <div key={filter} className="grid lg:grid-cols-2 gap-6">
+              {projects.map((p, i) => (
+                <article
+                  key={p.id}
+                  ref={filterTouched ? undefined : reveal}
+                  style={filterTouched ? { animationDelay: `${Math.min(i, 3) * 30}ms` } : undefined}
+                  className={`${card} p-5 sm:p-7 flex flex-col ${lift} ${filterTouched ? 'filter-in' : ''}`}
+                >
                   <div className="flex items-center justify-between gap-3 text-sm">
                     {p.badge ? (
                       <span className="rounded-full bg-[#635BFF]/10 text-[#635BFF] font-medium px-3 py-1 text-xs">
@@ -391,12 +445,12 @@ export default function App() {
               ))}
             </div>
 
-            <h3 className="mt-16 mb-5 text-lg font-semibold text-[#0A2540]">
+            <h3 ref={reveal} className="mt-16 mb-5 text-lg font-semibold text-[#0A2540]">
               {t('Smaller projects', 'Diğer küçük projeler')}
             </h3>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {MINI_PROJECTS.map((m) => (
-                <div key={m.name} className={`${card} p-5`}>
+                <div key={m.name} ref={reveal} className={`${card} p-5 ${lift}`}>
                   <div className="text-xs font-medium text-[#635BFF]">{m.tech}</div>
                   <div className="mt-1.5 font-semibold text-[#0A2540]">{m.name}</div>
                   <p className="mt-2 text-sm text-slate-600 leading-relaxed">{m.desc[lang]}</p>
@@ -410,7 +464,7 @@ export default function App() {
         <section id="ai" className="bg-[#0A2540] text-slate-300 scroll-mt-28 md:scroll-mt-16 relative overflow-hidden">
           <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[#635BFF]/30 blur-3xl" />
           <div className="relative max-w-6xl mx-auto px-5 py-16 sm:py-24">
-            <div className="max-w-2xl mb-12">
+            <div ref={reveal} className="max-w-2xl mb-12">
               <div className="text-sm font-semibold text-[#A29BFE] mb-3">{t('AI-assisted engineering', 'Yapay zeka destekli geliştirme')}</div>
               <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-white">
                 {t('Shipping with AI coding agents', 'AI kodlama ajanlarıyla yayına alma')}
@@ -419,7 +473,7 @@ export default function App() {
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {AI_STEPS.map((s, i) => (
-                <div key={i} className="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur">
+                <div key={i} ref={reveal} className="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur">
                   <div className="text-sm font-semibold text-[#A29BFE]">0{i + 1}</div>
                   <h3 className="mt-3 text-lg font-semibold text-white">{s.title[lang]}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate-300">{s.desc[lang]}</p>
@@ -438,7 +492,7 @@ export default function App() {
           />
           <div className="grid md:grid-cols-2 gap-5">
             {SKILL_GROUPS.map((g) => (
-              <div key={g.code} className={`${card} p-5 sm:p-7`}>
+              <div key={g.code} ref={reveal} className={`${card} p-5 sm:p-7`}>
                 <h3 className="font-semibold text-[#0A2540] mb-4">{g.title[lang]}</h3>
                 <div className="flex flex-wrap gap-2">
                   {g.skills.map((s) => (
@@ -459,7 +513,7 @@ export default function App() {
             />
             <div className="grid md:grid-cols-2 gap-5">
               {COMPETITIONS.map((c, i) => (
-                <div key={i} className={`${card} p-6 flex gap-4 ${c.highlight ? 'ring-1 ring-[#635BFF]/30' : ''}`}>
+                <div key={i} ref={reveal} className={`${card} p-6 flex gap-4 ${c.highlight ? 'ring-1 ring-[#635BFF]/30' : ''}`}>
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${c.highlight ? 'bg-[#635BFF] text-white' : 'bg-slate-100 text-slate-500'}`}>
                     {c.highlight ? <Trophy className="w-5 h-5" /> : <Award className="w-5 h-5" />}
                   </div>
@@ -481,21 +535,21 @@ export default function App() {
             title={t('Education & community', 'Eğitim ve topluluk')}
           />
           <div className="grid md:grid-cols-3 gap-5">
-            <div className={`${card} p-7`}>
+            <div ref={reveal} className={`${card} p-7`}>
               <div className="text-sm text-slate-500">{t('Education', 'Eğitim')}</div>
               <h3 className="mt-2 text-lg font-semibold text-[#0A2540]">{PROFILE_DATA.education.school[lang]}</h3>
               <p className="text-[#635BFF] font-medium text-sm">{PROFILE_DATA.education.degree[lang]}</p>
               <p className="mt-3 text-sm text-slate-500">{PROFILE_DATA.education.period[lang]}</p>
               <p className="mt-1 text-sm font-medium text-slate-800">GPA {PROFILE_DATA.education.gpa}</p>
             </div>
-            <div className={`${card} p-7`}>
+            <div ref={reveal} className={`${card} p-7`}>
               <div className="text-sm text-slate-500">{t('Languages', 'Diller')}</div>
               <ul className="mt-3 space-y-3 text-sm">
                 <li className="flex justify-between"><span>{t('Turkish', 'Türkçe')}</span><span className="font-medium text-[#0A2540]">{t('Native', 'Ana dil')}</span></li>
                 <li className="flex justify-between"><span>{t('English', 'İngilizce')}</span><span className="font-medium text-[#0A2540]">C1</span></li>
               </ul>
             </div>
-            <div className={`${card} p-7`}>
+            <div ref={reveal} className={`${card} p-7`}>
               <div className="text-sm text-slate-500">{t('Community', 'Topluluk')}</div>
               <ul className="mt-3 space-y-3 text-sm">
                 <li className="flex justify-between gap-3"><span>CENGA</span><span className="font-medium text-[#0A2540] text-right">{t('Social Events Coordinator', 'Sosyal Etkinlikler Koordinatörü')}</span></li>
@@ -508,7 +562,7 @@ export default function App() {
 
         {/* CONTACT */}
         <section id="contact" className="px-5 pb-24 scroll-mt-28 md:scroll-mt-16">
-          <div className="max-w-6xl mx-auto rounded-3xl stripe-cta text-white px-5 sm:px-8 py-14 sm:py-20 text-center">
+          <div ref={reveal} className="max-w-6xl mx-auto rounded-3xl stripe-cta text-white px-5 sm:px-8 py-14 sm:py-20 text-center">
             <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">{t('Let’s work together', 'Birlikte çalışalım')}</h2>
             <p className="mt-4 text-lg text-white/80 max-w-xl mx-auto">
               {t(
@@ -517,14 +571,14 @@ export default function App() {
               )}
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <a href={`mailto:${PROFILE_DATA.email}`} className="inline-flex items-center gap-2 rounded-full bg-white text-[#0A2540] font-medium px-5 sm:px-6 py-3 text-[13px] sm:text-base hover:bg-slate-100 transition-colors">
+              <a href={`mailto:${PROFILE_DATA.email}`} className={`inline-flex items-center gap-2 rounded-full bg-white text-[#0A2540] font-medium px-5 sm:px-6 py-3 text-[13px] sm:text-base hover:bg-slate-100 ${press}`}>
                 <Mail className="w-4 h-4" /> {PROFILE_DATA.email}
               </a>
-              <a href={PROFILE_DATA.linkedin} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/25 hover:bg-white/20 font-medium px-6 py-3 transition-colors">
-                <Linkedin className="w-4 h-4" /> LinkedIn <ArrowUpRight className="w-4 h-4" />
+              <a href={PROFILE_DATA.linkedin} target="_blank" rel="noreferrer" className={`group inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/25 hover:bg-white/20 font-medium px-6 py-3 ${press}`}>
+                <Linkedin className="w-4 h-4" /> LinkedIn <ArrowUpRight className={`w-4 h-4 ${nudgeUpRight}`} />
               </a>
-              <a href={PROFILE_DATA.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/25 hover:bg-white/20 font-medium px-6 py-3 transition-colors">
-                <Github className="w-4 h-4" /> GitHub <ArrowUpRight className="w-4 h-4" />
+              <a href={PROFILE_DATA.github} target="_blank" rel="noreferrer" className={`group inline-flex items-center gap-1.5 rounded-full bg-white/10 border border-white/25 hover:bg-white/20 font-medium px-6 py-3 ${press}`}>
+                <Github className="w-4 h-4" /> GitHub <ArrowUpRight className={`w-4 h-4 ${nudgeUpRight}`} />
               </a>
             </div>
           </div>

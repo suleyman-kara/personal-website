@@ -4,8 +4,15 @@
 
 @layer utilities {
   .stripe-hero {
-    background: linear-gradient(135deg, #ffd6f5 0%, #c9c4ff 30%, #a5e3ff 60%, #fff0c2 100%);
+    overflow: hidden;
     opacity: 0.75;
+  }
+  /* Slightly oversized layer so the slow drift never exposes an edge. */
+  .stripe-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0 -10%;
+    background: linear-gradient(135deg, #ffd6f5 0%, #c9c4ff 30%, #a5e3ff 60%, #fff0c2 100%);
   }
   .stripe-cta {
     background: linear-gradient(120deg, #635bff 0%, #8b5cf6 45%, #00a3ff 100%);
@@ -14,4 +21,94 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+/* ---------------------------------------------------------------- */
+/* Motion: one easing, small distances, opacity/transform only.      */
+/* ---------------------------------------------------------------- */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes rise-in-sm {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+}
+
+@keyframes hero-drift {
+  from {
+    transform: translate3d(-4%, 0, 0);
+  }
+  to {
+    transform: translate3d(4%, 0, 0);
+  }
+}
+
+/* Desktop nav active indicator: thin accent line on the header's bottom edge. */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -22px;
+  height: 2px;
+  border-radius: 9999px;
+  background: #635bff;
+  transform: scaleX(0);
+  transition: transform 300ms var(--ease-out-expo);
+}
+.nav-link[aria-current='true']::after {
+  transform: scaleX(1);
+}
+
+/* Segmented-control pill (positioned from JS). */
+.seg-pill {
+  opacity: 0;
+  transition:
+    transform 300ms var(--ease-out-expo),
+    width 300ms var(--ease-out-expo),
+    height 300ms var(--ease-out-expo);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-in {
+    animation: rise-in 560ms var(--ease-out-expo) backwards;
+  }
+  .filter-in {
+    animation: rise-in-sm 260ms var(--ease-out-expo) backwards;
+  }
+  .stripe-hero::before {
+    animation: hero-drift 32s ease-in-out infinite alternate;
+  }
+
+  /* Scroll reveal (states are set by `reveal` in src/motion.ts). */
+  .reveal-ready [data-reveal='pending'] {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  .reveal-ready [data-reveal='in'] {
+    transition:
+      opacity 560ms var(--ease-out-expo),
+      transform 560ms var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seg-pill,
+  .nav-link::after {
+    transition: none;
+  }
 }
