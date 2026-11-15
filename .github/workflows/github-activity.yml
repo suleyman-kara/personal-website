@@ -1,0 +1,45 @@
+name: Update GitHub activity data
+
+# The live site is built from the repository as is, so the activity data has to
+# be committed. This refreshes src/data/github.json once a day.
+on:
+  schedule:
+    - cron: '43 3 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - scripts/fetch-github.mjs
+      - .github/workflows/github-activity.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-activity
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fetch GitHub activity
+        run: node scripts/fetch-github.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- src/data/github.json; then
+            echo "No change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/github.json
+          git commit -m "Update GitHub activity data"
+          git pull --rebase origin main
+          git push origin HEAD:main
