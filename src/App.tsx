@@ -26,6 +26,7 @@ import {
   COMPETITIONS,
 } from './data/portfolioData';
 import { reveal, useKeepActiveInView, useScrollSpy, useSlidingPill } from './motion';
+import GithubActivity from './GithubActivity';
 
 type Filter = 'all' | 'ml' | 'web' | 'systems';
 
@@ -571,6 +572,8 @@ export default function App() {
             ))}
           </div>
         </section>
+
+        <GithubActivity lang={lang} profileUrl={PROFILE_DATA.github} cardClass={card} />
 
         {/* AWARDS */}
         <section id="awards" className="bg-slate-50 border-y border-slate-200/70 scroll-mt-28 md:scroll-mt-16">
