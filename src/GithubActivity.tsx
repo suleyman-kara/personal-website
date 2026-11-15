@@ -29,7 +29,7 @@ const data = activity as Activity;
 // Dark mode steps up from the card toward the light accent tint, so busier days read brighter.
 const LEVEL = [
   'bg-chip',
-  'bg-[#635BFF]/25 dark:bg-[#2F3290]',
+  'bg-[#635BFF]/25 dark:bg-[#32389C]',
   'bg-[#635BFF]/50 dark:bg-[#4943C4]',
   'bg-[#635BFF]/75 dark:bg-[#6E66F2]',
   'bg-[#635BFF] dark:bg-[#ABA6FF]',

@@ -496,7 +496,7 @@ export default function App() {
                   <p className="mt-3 text-[15px] leading-relaxed text-muted">{p.summary[lang]}</p>
 
                   {p.metrics && (
-                    <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl bg-band p-4">
+                    <div className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-4 rounded-xl bg-inset p-4">
                       {p.metrics.map((m, i) => (
                         <div key={i}>
                           <div className="text-xs text-subtle">{m.label[lang]}</div>
@@ -516,7 +516,7 @@ export default function App() {
                   </ul>
 
                   {p.agentNote && (
-                    <div className="mt-5 flex gap-2.5 rounded-xl bg-accent/5 text-sm text-body p-3.5">
+                    <div className="mt-5 flex gap-2.5 rounded-xl bg-accent/5 dark:bg-accent/[0.08] text-sm text-body p-3.5">
                       <Terminal className="w-4 h-4 text-accent shrink-0 mt-0.5" />
                       <span>{p.agentNote[lang]}</span>
                     </div>

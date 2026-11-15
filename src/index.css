@@ -12,6 +12,7 @@
     --c-band: 248 250 252; /* slate-50 */
     --c-card: 255 255 255; /* white */
     --c-chip: 241 245 249; /* slate-100 */
+    --c-inset: 248 250 252; /* slate-50 */
     --c-pill: 255 255 255; /* white */
     --c-line: 226 232 240; /* slate-200 */
     --c-line-strong: 203 213 225; /* slate-300 */
@@ -30,10 +31,11 @@
   .dark {
     color-scheme: dark;
     --c-page: 6 21 39; /* #061527 page */
-    --c-band: 9 28 50; /* #091C32 alternate band */
+    --c-band: 10 30 54; /* #0A1E36 alternate band */
     --c-card: 13 37 64; /* #0D2540 card */
-    --c-chip: 24 49 80; /* #183150 chips, tracks, insets */
-    --c-pill: 44 70 104; /* #2C4668 lang pill */
+    --c-chip: 24 49 80; /* #183150 chips, tracks */
+    --c-inset: 10 31 56; /* #0A1F38 recessed boxes inside cards */
+    --c-pill: 52 81 120; /* #345178 lang pill */
     --c-line: 33 58 90; /* #213A5A */
     --c-line-strong: 52 84 122; /* #34547A */
     --c-ink: 240 244 250; /* #F0F4FA headings */
@@ -71,7 +73,7 @@
     background: linear-gradient(135deg, #4a1d6b 0%, #2f2a8f 30%, #0b4f7a 60%, #3d2f55 100%);
   }
   .dark .stripe-cta {
-    background: linear-gradient(120deg, #5048e5 0%, #6d3fd6 45%, #0b7fd1 100%);
+    background: linear-gradient(120deg, #5048e5 0%, #6d3fd6 45%, #0a68b8 100%);
   }
 }
 

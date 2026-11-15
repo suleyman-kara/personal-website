@@ -10,7 +10,7 @@ export default {
       // Semantic theme colors. Values live in src/index.css as RGB channels
       // (:root = light, .dark = dark) so opacity modifiers like border-line/70 work.
       colors: Object.fromEntries(
-        ['page', 'band', 'card', 'chip', 'pill', 'line', 'line-strong', 'ink', 'on-ink', 'strong', 'body', 'muted', 'subtle', 'faint', 'accent', 'feature'].map(
+        ['page', 'band', 'card', 'chip', 'inset', 'pill', 'line', 'line-strong', 'ink', 'on-ink', 'strong', 'body', 'muted', 'subtle', 'faint', 'accent', 'feature'].map(
           (name) => [name, `rgb(var(--c-${name}) / <alpha-value>)`]
         )
       ),
