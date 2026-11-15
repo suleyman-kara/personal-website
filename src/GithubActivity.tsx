@@ -70,7 +70,7 @@ export default function GithubActivity({
 
   return (
     <section className="max-w-6xl mx-auto px-5 pb-16 sm:pb-24">
-      <div ref={reveal} className={`${cardClass} p-5 sm:p-7 grid lg:grid-cols-12 gap-8`}>
+      <div ref={reveal} data-glow className={`${cardClass} p-5 sm:p-7 grid lg:grid-cols-12 gap-8`}>
         <div className="lg:col-span-8 min-w-0">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <h3 className="font-semibold text-ink">

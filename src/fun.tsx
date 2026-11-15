@@ -68,7 +68,7 @@ export function HeroPhoto({
   };
 
   return (
-    <div className={`relative shrink-0 ${className}`} style={style}>
+    <div className={`relative shrink-0 w-fit ${className}`} style={style}>
       <div data-tilt>
         <button
           type="button"

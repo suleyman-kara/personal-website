@@ -30,6 +30,8 @@ import {
 import { reveal, useKeepActiveInView, useScrollSpy, useSlidingPill } from './motion';
 import GithubActivity from './GithubActivity';
 import { useTheme } from './theme';
+import { usePointerFx } from './pointer';
+import { HeroPhoto, useIndecision } from './fun';
 
 type Filter = 'all' | 'ml' | 'web' | 'systems';
 
@@ -156,6 +158,8 @@ export default function App() {
   }, []);
   const t = (en: string, tr: string) => (lang === 'en' ? en : tr);
   const { theme, toggle: toggleTheme } = useTheme();
+  usePointerFx();
+  const indecision = useIndecision(lang);
   const dark = theme === 'dark';
 
   const copyEmail = () => {
@@ -213,9 +217,13 @@ export default function App() {
                 </button>
               ))}
             </div>
+            <span className="relative inline-flex">
             <button
               type="button"
-              onClick={toggleTheme}
+              onClick={() => {
+                toggleTheme();
+                indecision.note();
+              }}
               aria-label={dark ? t('Switch to light theme', 'Açık temaya geç') : t('Switch to dark theme', 'Koyu temaya geç')}
               title={dark ? t('Light theme', 'Açık tema') : t('Dark theme', 'Koyu tema')}
               className="-mx-1 inline-flex items-center justify-center w-8 h-8 rounded-full text-subtle hover:text-ink hover:bg-chip transition-colors"
@@ -225,6 +233,8 @@ export default function App() {
                 <Sun data-theme-icon className={`absolute inset-0 w-4 h-4 transition-[opacity,transform] duration-200 ease-out-expo ${dark ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-50 rotate-45'}`} />
               </span>
             </button>
+            {indecision.nudge}
+            </span>
             <a
               href="#contact"
               className={`group hidden sm:inline-flex items-center gap-1 rounded-full bg-[#635BFF] hover:bg-[#5249e6] text-white text-sm font-medium px-4 py-2 ${press}`}
@@ -254,8 +264,9 @@ export default function App() {
 
       <main id="top">
         {/* HERO */}
-        <section className="relative overflow-hidden">
+        <section data-hero-light className="relative overflow-hidden">
           <div className="stripe-hero absolute inset-x-0 top-0 h-[560px] -skew-y-6 origin-top-left -translate-y-24" />
+          <div className="hero-light" />
           <div className="relative max-w-6xl mx-auto px-5 pt-12 sm:pt-20 pb-16 sm:pb-24 lg:pt-28">
             <div className="flex flex-col-reverse lg:flex-row lg:items-center gap-10 lg:gap-16">
             <div className="max-w-3xl">
@@ -311,11 +322,12 @@ export default function App() {
                 </span>
               </div>
             </div>
-            <img
+            <HeroPhoto
               src="profile.jpg"
               alt={PROFILE_DATA.name}
+              lang={lang}
+              className="hero-in"
               style={{ animationDelay: '100ms' }}
-              className="hero-in w-40 h-40 sm:w-52 sm:h-52 lg:w-64 lg:h-64 rounded-3xl object-cover shrink-0 shadow-2xl shadow-[#635BFF]/20 ring-4 ring-card"
             />
             </div>
 
@@ -351,7 +363,7 @@ export default function App() {
           />
           <div className="space-y-5">
             {EXPERIENCES.map((exp) => (
-              <article key={exp.id} ref={reveal} className={`${card} p-6 sm:p-8 grid lg:grid-cols-12 gap-6`}>
+              <article key={exp.id} ref={reveal} data-glow className={`${card} p-6 sm:p-8 grid lg:grid-cols-12 gap-6`}>
                 <div className="lg:col-span-4">
                   <div className="text-sm text-subtle">{exp.period[lang]}</div>
                   <h3 className="mt-2 text-xl font-semibold text-ink">{exp.role[lang]}</h3>
@@ -451,6 +463,7 @@ export default function App() {
                   key={p.id}
                   ref={filterTouched ? undefined : reveal}
                   style={filterTouched ? { animationDelay: `${Math.min(i, 3) * 30}ms` } : undefined}
+                  data-glow
                   className={`${card} p-5 sm:p-7 flex flex-col ${lift} ${filterTouched ? 'filter-in' : ''}`}
                 >
                   {p.image && (
@@ -536,7 +549,7 @@ export default function App() {
             </h3>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {MINI_PROJECTS.map((m) => (
-                <div key={m.name} ref={reveal} className={`${card} p-5 ${lift}`}>
+                <div key={m.name} ref={reveal} data-glow className={`${card} p-5 ${lift}`}>
                   <div className="text-xs font-medium text-accent">{m.tech}</div>
                   <div className="mt-1.5 font-semibold text-ink">{m.name}</div>
                   <p className="mt-2 text-sm text-muted leading-relaxed">{m.desc[lang]}</p>
@@ -578,7 +591,7 @@ export default function App() {
           />
           <div className="grid md:grid-cols-2 gap-5">
             {SKILL_GROUPS.map((g) => (
-              <div key={g.code} ref={reveal} className={`${card} p-5 sm:p-7`}>
+              <div key={g.code} ref={reveal} data-glow className={`${card} p-5 sm:p-7`}>
                 <h3 className="font-semibold text-ink mb-4">{g.title[lang]}</h3>
                 <div className="flex flex-wrap gap-2">
                   {g.skills.map((s) => (
@@ -601,7 +614,7 @@ export default function App() {
             />
             <div className="grid md:grid-cols-2 gap-5">
               {COMPETITIONS.map((c, i) => (
-                <div key={i} ref={reveal} className={`${card} p-6 flex gap-4 ${c.highlight ? 'ring-1 ring-accent/30' : ''}`}>
+                <div key={i} ref={reveal} data-glow className={`${card} p-6 flex gap-4 ${c.highlight ? 'ring-1 ring-accent/30' : ''}`}>
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${c.highlight ? 'bg-[#635BFF] text-white' : 'bg-chip text-subtle'}`}>
                     {c.highlight ? <Trophy className="w-5 h-5" /> : <Award className="w-5 h-5" />}
                   </div>
@@ -623,21 +636,21 @@ export default function App() {
             title={t('Education & community', 'Eğitim ve topluluk')}
           />
           <div className="grid md:grid-cols-3 gap-5">
-            <div ref={reveal} className={`${card} p-7`}>
+            <div ref={reveal} data-glow className={`${card} p-7`}>
               <div className="text-sm text-subtle">{t('Education', 'Eğitim')}</div>
               <h3 className="mt-2 text-lg font-semibold text-ink">{PROFILE_DATA.education.school[lang]}</h3>
               <p className="text-accent font-medium text-sm">{PROFILE_DATA.education.degree[lang]}</p>
               <p className="mt-3 text-sm text-subtle">{PROFILE_DATA.education.period[lang]}</p>
               <p className="mt-1 text-sm font-medium text-strong">GPA {PROFILE_DATA.education.gpa}</p>
             </div>
-            <div ref={reveal} className={`${card} p-7`}>
+            <div ref={reveal} data-glow className={`${card} p-7`}>
               <div className="text-sm text-subtle">{t('Languages', 'Diller')}</div>
               <ul className="mt-3 space-y-3 text-sm">
                 <li className="flex justify-between"><span>{t('Turkish', 'Türkçe')}</span><span className="font-medium text-ink">{t('Native', 'Ana dil')}</span></li>
                 <li className="flex justify-between"><span>{t('English', 'İngilizce')}</span><span className="font-medium text-ink">C1</span></li>
               </ul>
             </div>
-            <div ref={reveal} className={`${card} p-7`}>
+            <div ref={reveal} data-glow className={`${card} p-7`}>
               <div className="text-sm text-subtle">{t('Community', 'Topluluk')}</div>
               <ul className="mt-3 space-y-3 text-sm">
                 <li className="flex justify-between gap-3"><span>CENGA</span><span className="font-medium text-ink text-right">{t('Social Events Coordinator', 'Sosyal Etkinlikler Koordinatörü')}</span></li>
@@ -676,10 +689,12 @@ export default function App() {
       <footer className="border-t border-line/70">
         <div className="max-w-6xl mx-auto px-5 py-8 text-sm text-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
           <span>© 2026 {PROFILE_DATA.name}</span>
-          <div className="flex gap-5">
+          <div className="flex flex-wrap justify-center gap-x-5 gap-y-2">
             <a href={PROFILE_DATA.github} target="_blank" rel="noreferrer" className="hover:text-accent">GitHub</a>
             <a href={PROFILE_DATA.linkedin} target="_blank" rel="noreferrer" className="hover:text-accent">LinkedIn</a>
             <a href={PROFILE_DATA.kaggle} target="_blank" rel="noreferrer" className="hover:text-accent">Kaggle</a>
+            <a href={PROFILE_DATA.instagram} target="_blank" rel="noreferrer" className="hover:text-accent">Instagram</a>
+            <a href={PROFILE_DATA.youtube} target="_blank" rel="noreferrer" className="hover:text-accent">YouTube</a>
           </div>
         </div>
       </footer>
