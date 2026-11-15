@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -119,74 +119,4 @@ export function useSlidingPill<T extends HTMLElement>(active: string) {
   }, [place]);
 
   return { containerRef, pillRef };
-}
-
-/* ------------------------------------------------------------------ */
-/* Nav scroll-spy                                                      */
-/* ------------------------------------------------------------------ */
-
-export function useScrollSpy(ids: readonly string[]) {
-  const [active, setActive] = useState<string | null>(null);
-  const locked = useRef(false);
-  const unlockTimer = useRef(0);
-
-  // While a nav click's smooth scroll runs, keep the clicked link active;
-  // release once scrolling has been idle briefly.
-  const holdUnlock = () => {
-    window.clearTimeout(unlockTimer.current);
-    unlockTimer.current = window.setTimeout(() => (locked.current = false), 150);
-  };
-
-  useEffect(() => {
-    let raf = 0;
-    const compute = () => {
-      raf = 0;
-      const header = document.querySelector('header');
-      const top = header ? header.getBoundingClientRect().height : 0;
-      const line = top + (window.innerHeight - top) * 0.3;
-      let current: string | null = null;
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= line) current = id;
-      }
-      setActive(current);
-    };
-    const onScroll = () => {
-      if (locked.current) return holdUnlock();
-      if (!raf) raf = requestAnimationFrame(compute);
-    };
-    compute();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      cancelAnimationFrame(raf);
-      window.clearTimeout(unlockTimer.current);
-    };
-  }, [ids]);
-
-  const select = (id: string) => {
-    locked.current = true;
-    setActive(id);
-    holdUnlock();
-  };
-
-  return { active, select };
-}
-
-/** Keep the [data-spy=active] link horizontally visible inside a scroller (no vertical page scroll). */
-export function useKeepActiveInView(scrollerRef: RefObject<HTMLElement | null>, active: string | null) {
-  useEffect(() => {
-    const scroller = scrollerRef.current;
-    if (!scroller || !active || scroller.scrollWidth <= scroller.clientWidth) return;
-    const link = scroller.querySelector<HTMLElement>(`[data-spy="${active}"]`);
-    if (!link) return;
-    const s = scroller.getBoundingClientRect();
-    const l = link.getBoundingClientRect();
-    scroller.scrollBy({
-      left: l.left - s.left - (s.width - l.width) / 2,
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-    });
-  }, [scrollerRef, active]);
 }

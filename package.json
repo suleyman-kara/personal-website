@@ -4,9 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build && node scripts/postbuild.mjs",
+    "typecheck": "tsc --noEmit",
+    "fetch:github": "node scripts/fetch-github.mjs",
+    "fetch:youtube": "node scripts/fetch-youtube.mjs"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
@@ -18,7 +20,7 @@
     "shiki": "^4.6.0"
   },
   "devDependencies": {
-    "@types/node": "26.6.6",
+    "@types/node": "^26.6.6",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.20",

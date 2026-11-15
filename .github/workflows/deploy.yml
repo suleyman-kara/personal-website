@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '17 4 * * *' # daily rebuild so the GitHub activity stays current
+    - cron: '17 4 * * *' # daily rebuild so the GitHub activity and videos stay current
   workflow_dispatch:
 
 permissions:
@@ -30,7 +30,9 @@ jobs:
         run: node scripts/fetch-github.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npm run build
+      - name: Fetch YouTube videos
+        run: node scripts/fetch-youtube.mjs
+      - run: npm run build # static export into dist/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

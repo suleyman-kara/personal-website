@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Post } from '@/lib/content';
 import { KIND_LABEL, formatDate, localePath, otherLang, readingTimeLabel, type Lang } from '@/lib/site';
 import YouTubeEmbed from '../YouTubeEmbed';
+import LangLink from '../LangLink';
 import { card, lift, nudgeLeft, nudgeRight } from '../styles';
 
 type Neighbor = Pick<Post, 'slug' | 'title'> | null;
@@ -44,9 +45,9 @@ export default function PostPage({
         <p className="mt-5 text-lg sm:text-xl leading-relaxed text-muted">{post.summary}</p>
         {otherExists && (
           <p className="mt-5 text-sm text-subtle">
-            <a href={localePath(other, `/blog/${post.slug}/`)} lang={other} className="font-medium text-accent hover:underline">
+            <LangLink lang={other} href={localePath(other, `/blog/${post.slug}/`)} className="font-medium text-accent hover:underline">
               {lang === 'en' ? 'Bu yazının Türkçesi de var.' : 'This post is also available in English.'}
-            </a>
+            </LangLink>
           </p>
         )}
       </header>

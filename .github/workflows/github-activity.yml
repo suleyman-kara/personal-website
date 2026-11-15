@@ -1,7 +1,8 @@
-name: Update GitHub activity data
+name: Update GitHub activity and YouTube data
 
-# The live site is built from the repository as is, so the activity data has to
-# be committed. This refreshes src/data/github.json once a day.
+# The live site is built from the repository as is, so the data files have to be
+# committed. This refreshes src/data/github.json and src/data/youtube.json once a day.
+# Both scripts keep the existing file and exit 0 when a fetch fails.
 on:
   schedule:
     - cron: '43 3 * * *'
@@ -10,6 +11,7 @@ on:
     branches: [main]
     paths:
       - scripts/fetch-github.mjs
+      - scripts/fetch-youtube.mjs
       - .github/workflows/github-activity.yml
 
 permissions:
@@ -31,15 +33,17 @@ jobs:
         run: node scripts/fetch-github.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch YouTube videos
+        run: node scripts/fetch-youtube.mjs
       - name: Commit if changed
         run: |
-          if git diff --quiet -- src/data/github.json; then
+          git add src/data/github.json src/data/youtube.json
+          if git diff --cached --quiet; then
             echo "No change"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/github.json
-          git commit -m "Update GitHub activity data"
+          git commit -m "Update GitHub activity and YouTube data"
           git pull --rebase origin main
           git push origin HEAD:main
