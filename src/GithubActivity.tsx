@@ -1,10 +1,12 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 import { ArrowUpRight, Github } from 'lucide-react';
 import activity from './data/github.json';
-import { reveal } from './motion';
+import { rv } from './motion';
 import type { Lang } from './data/portfolioData';
 
-// src/data/github.json is rewritten by scripts/fetch-github.mjs during the deploy build.
+// src/data/github.json is rewritten daily by scripts/fetch-github.mjs (.github/workflows/github-activity.yml).
 interface Day {
   date: string;
   count: number;
@@ -69,8 +71,7 @@ export default function GithubActivity({
   });
 
   return (
-    <section className="max-w-6xl mx-auto px-5 pb-16 sm:pb-24">
-      <div ref={reveal} data-glow className={`${cardClass} p-5 sm:p-7 grid lg:grid-cols-12 gap-8`}>
+    <div {...rv} data-glow className={`${cardClass} p-5 sm:p-7 grid lg:grid-cols-12 gap-8`}>
         <div className="lg:col-span-8 min-w-0">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
             <h3 className="font-semibold text-ink">
@@ -157,7 +158,6 @@ export default function GithubActivity({
             </ul>
           </div>
         )}
-      </div>
-    </section>
+    </div>
   );
 }

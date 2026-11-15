@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 //  [data-glow]        card border lights up on the side nearest the pointer
 //  [data-tilt]        element leans a few degrees toward the pointer
 // Everything is written as CSS variables; the look lives in src/fun.css.
+// Mounted once in the shared layout; it looks elements up on every frame, so it
+// keeps working across client-side page changes.
 
 const GLOW_RANGE = 140; // px outside a card at which its border starts to light
 const TILT_MAX = 5; // degrees

@@ -7,9 +7,11 @@ export const prefersReducedMotion = () =>
 /* Scroll reveal                                                       */
 /* ------------------------------------------------------------------ */
 // Elements pass through data-reveal="pending" -> "in" -> "done".
-// The hidden "pending" style only applies while <html> has .reveal-ready,
-// which is added here (never without JS, IntersectionObserver or with
-// reduced motion). "done" drops every reveal rule so the element's own
+// Pages are prerendered, so revealed elements carry data-reveal="pending" in the
+// HTML (spread `rv`). The hidden style only applies while <html> has .reveal-ready,
+// which the inline head script adds before paint (never without
+// IntersectionObserver or with reduced motion) and removes again if this module
+// never reports in. "done" drops every reveal rule so the element's own
 // transitions (e.g. hover lift) take over again with no delay.
 
 const STAGGER = 70;
@@ -33,6 +35,7 @@ function getObserver() {
   const io = new IntersectionObserver(
     (entries) => {
       observerAlive = true;
+      (window as unknown as { __revealAlive?: boolean }).__revealAlive = true;
       const entering: IntersectionObserverEntry[] = [];
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
@@ -64,13 +67,19 @@ function getObserver() {
 /** Ref callback: fade/rise the element in once when it enters the viewport. */
 export function reveal(el: HTMLElement | null) {
   if (!el || el.dataset.reveal === 'in' || el.dataset.reveal === 'done') return;
-  if (typeof IntersectionObserver === 'undefined' || prefersReducedMotion()) return;
+  if (typeof IntersectionObserver === 'undefined' || prefersReducedMotion()) {
+    el.dataset.reveal = 'done';
+    return;
+  }
   document.documentElement.classList.add('reveal-ready');
   el.dataset.reveal = 'pending';
   const io = getObserver();
   io.observe(el);
   return () => io.unobserve(el);
 }
+
+/** Spread on an element to reveal it on scroll: `<div {...rv}>`. */
+export const rv = { ref: reveal, 'data-reveal': 'pending' } as const;
 
 /* ------------------------------------------------------------------ */
 /* Sliding pill for segmented controls                                 */

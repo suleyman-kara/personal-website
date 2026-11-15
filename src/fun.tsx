@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+'use client';
+
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { Lang } from './data/portfolioData';
 
 // Small hidden jokes. Nothing here shows unless someone goes poking.
@@ -45,7 +47,7 @@ export function HeroPhoto({
   alt: string;
   lang: Lang;
   className: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }) {
   const [clicks, setClicks] = useState(0);
   const [move, setMove] = useState<{ kind: 'wobble' | 'spin'; id: number } | null>(null);

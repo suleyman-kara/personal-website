@@ -128,7 +128,7 @@ html.dark :focus-visible {
   }
 }
 
-/* Desktop nav active indicator: thin accent line on the header's bottom edge. */
+/* Desktop nav active indicator (current route): thin accent line on the header's bottom edge. */
 .nav-link {
   position: relative;
 }
@@ -144,7 +144,7 @@ html.dark :focus-visible {
   transform: scaleX(0);
   transition: transform 300ms var(--ease-out-expo);
 }
-.nav-link[aria-current='true']::after {
+.nav-link[aria-current]::after {
   transform: scaleX(1);
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-// The first paint is themed by the inline script in index.html (same key and colors).
+// The first paint is themed by the inline script in src/components/RootDocument.tsx (same key and colors).
 export type Theme = 'light' | 'dark';
 
 const THEME_KEY = 'theme';
@@ -29,11 +29,11 @@ function applyTheme(theme: Theme) {
 
 /** Current theme plus a toggle. An explicit choice is stored; until then the OS setting is followed live. */
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() =>
-    document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-  );
+  // Prerendered as light; the real value is read from <html> (set before paint) on mount.
+  const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
+    setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
     const mq = darkQuery();
     const onChange = () => {
       if (storedTheme()) return;
@@ -46,7 +46,8 @@ export function useTheme() {
   }, []);
 
   const toggle = () => {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark';
+    const current: Theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+    const next: Theme = current === 'dark' ? 'light' : 'dark';
     try {
       localStorage.setItem(THEME_KEY, next);
     } catch {
