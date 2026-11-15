@@ -269,6 +269,42 @@ export const EXPERIENCES: ExperienceItem[] = [
 
 export const PROJECTS: ProjectItem[] = [
   {
+    id: 'suiz',
+    image: 'projects/suiz.jpg',
+    name: 'Suİz',
+    badge: {
+      en: 'Arduino UNO Q Innovation Competition · Top 100 Teams',
+      tr: 'Arduino UNO Q İnovasyon Yarışması · İlk 100 Takım',
+    },
+    category: 'ml',
+    period: { en: 'Nov 2026 – Present', tr: 'Kasım 2026 – Devam ediyor' },
+    repoUrl: 'https://github.com/Berceste-Team/Su-z',
+    liveUrl: 'https://berceste-team.github.io/Su-z/',
+    liveLabel: 'berceste-team.github.io/Su-z',
+    tech: ['Arduino UNO Q', 'STM32 · C++', 'Python', 'SQLite', 'Time-Series Forecasting', 'Anomaly Detection'],
+    summary: {
+      en: 'Closed-loop smart irrigation system on the Arduino UNO Q that decides on-device when and how much to water based on the remaining water budget. Built in a three-person team.',
+      tr: 'Arduino UNO Q üzerinde çalışan, ne zaman ve ne kadar sulanacağına kalan su bütçesine göre cihaz üzerinde karar veren kapalı döngülü akıllı sulama sistemi. Üç kişilik takımla geliştiriliyor.',
+    },
+    metrics: [
+      { label: { en: 'Category', tr: 'Kategori' }, value: 'AI' },
+      { label: { en: 'Selection', tr: 'Seçim' }, value: 'Top 100' },
+      { label: { en: 'Status', tr: 'Durum' }, value: 'Prototype' },
+    ],
+    bullets: {
+      en: [
+        'Uses the board\'s two processors for separate jobs: the STM32 microcontroller reads sensors, drives the pumps and counts flow, while the Linux side logs measurements, forecasts soil moisture, checks sensors for anomalies and applies the water-budget policy.',
+        'The model never drives the pump directly. It sends requests to a safety supervisor on the microcontroller, which enforces tank level, maximum run time and a minimum interval, and shuts the pump off if the Linux side stops responding.',
+        'Planned A/B experiment on two identical planters (tuned timer vs. Suİz) measuring water used, time in the target moisture range and yield. Currently in the build phase; results will be published as measured.',
+      ],
+      tr: [
+        'Kartın iki işlemcisi ayrı işler için kullanılıyor: STM32 mikrodenetleyici sensörleri okur, pompaları sürer ve akışı sayar; Linux tarafı ölçümleri kaydeder, toprak nemini tahmin eder, sensör anomalilerini denetler ve su bütçesi politikasını uygular.',
+        'Model pompayı doğrudan sürmez. Mikrodenetleyicideki güvenlik denetçisine istek gönderir; denetçi depo seviyesi, azami süre ve bekleme aralığı kurallarını uygular, Linux tarafı yanıt vermezse pompayı kapatır.',
+        'İki özdeş saksıda A/B deneyi planlandı (ayarlı zamanlayıcı ve Suİz): verilen su, hedef nem aralığında kalma oranı ve hasat ölçülecek. Şu an kurulum aşamasında; sonuçlar ölçüldüğü gibi yayımlanacak.',
+      ],
+    },
+  },
+  {
     id: 'pathguard',
     name: 'PathGuard',
     badge: {
@@ -609,6 +645,18 @@ export const SKILL_GROUPS = [
 ];
 
 export const COMPETITIONS = [
+  {
+    date: { en: 'Nov 2026', tr: 'Kasım 2026' },
+    title: {
+      en: 'Arduino UNO Q Türkiye Innovation Project Competition, Robotistan (Suİz)',
+      tr: 'Arduino UNO Q Türkiye İnovasyon Proje Yarışması, Robotistan (Suİz)',
+    },
+    result: {
+      en: 'Selected among the top 100 teams · Artificial Intelligence category',
+      tr: 'İlk 100 takım arasına seçildi · Yapay Zekâ kategorisi',
+    },
+    highlight: true,
+  },
   {
     date: '2026',
     title: {
