@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import '@/index.css';
 import '@/fun.css';
 import '@/prose.css';
-import { LANG_KEY, otherLang, type Lang } from '@/lib/site';
+import { LANG_KEY, SITE_URL, otherLang, type Lang } from '@/lib/site';
+import { PROFILE_DATA } from '@/data/portfolioData';
 
 // Theme before first paint: stored choice, else the OS setting (kept in sync by src/theme.ts).
 // Also arms the scroll reveal (see src/motion.ts) so prerendered content never blinks.
@@ -67,6 +68,48 @@ function langScript(lang: Lang, otherPaths: string[]) {
 })();`;
 }
 
+/**
+ * Structured data that tells search engines who the site is about and which
+ * profiles belong to the same person (helps name searches and the knowledge panel).
+ */
+function personJsonLd(lang: Lang) {
+  const personId = `${SITE_URL}/#person`;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': `${SITE_URL}/#website`,
+        url: `${SITE_URL}/`,
+        name: PROFILE_DATA.name,
+        inLanguage: ['en', 'tr'],
+        publisher: { '@id': personId },
+      },
+      {
+        '@type': 'Person',
+        '@id': personId,
+        name: PROFILE_DATA.name,
+        alternateName: 'Suleyman Kara',
+        url: `${SITE_URL}/`,
+        image: `${SITE_URL}/profile.jpg`,
+        jobTitle: PROFILE_DATA.title[lang],
+        description: PROFILE_DATA.summary[lang],
+        email: `mailto:${PROFILE_DATA.email}`,
+        address: { '@type': 'PostalAddress', addressLocality: 'Adana', addressCountry: 'TR' },
+        alumniOf: { '@type': 'CollegeOrUniversity', name: PROFILE_DATA.education.school[lang] },
+        knowsLanguage: ['tr', 'en'],
+        sameAs: [
+          PROFILE_DATA.linkedin,
+          PROFILE_DATA.github,
+          PROFILE_DATA.kaggle,
+          PROFILE_DATA.instagram,
+          PROFILE_DATA.youtube,
+        ],
+      },
+    ],
+  };
+}
+
 export default function RootDocument({
   lang,
   otherPaths,
@@ -83,6 +126,10 @@ export default function RootDocument({
         <meta name="theme-color" content="#ffffff" />
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         {otherPaths && <script dangerouslySetInnerHTML={{ __html: langScript(lang, otherPaths) }} />}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd(lang)).replace(/</g, '\\u003c') }}
+        />
         <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
