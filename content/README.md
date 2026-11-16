@@ -53,8 +53,8 @@ GitHub-flavored Markdown: headings, bold, italic, strikethrough, links, lists, t
 
 ## Videos
 
-`scripts/fetch-youtube.mjs` reads the public feed of youtube.com/@slmnkara into `src/data/youtube.json` (a daily GitHub Action keeps it current; do not edit it by hand). Those videos appear in the blog as `video` cards that open on YouTube, in both languages. To give a video its own page with text, write a post with `kind: video` and `youtube: <id>`: it replaces the imported card in that language.
+Videos are not imported automatically. To put a video on the blog, write a post with `kind: video` and `youtube: <id>`; it gets a card in the list and a page with the player.
 
 ## When there is nothing to show
 
-With no published posts and no videos, the Blog link is hidden from the header and the Links page, and `/blog/` shows an empty state. The home page "Latest writing" block appears only when there is at least one published `article`.
+With no published posts, the Blog link is hidden from the header and the Links page, and `/blog/` shows an empty state. The home page "Latest writing" block appears only when there is at least one published `article`.

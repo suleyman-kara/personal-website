@@ -30,8 +30,6 @@ jobs:
         run: node scripts/fetch-github.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Fetch YouTube videos
-        run: node scripts/fetch-youtube.mjs
       - run: npm run build # static export into dist/
       - uses: actions/upload-pages-artifact@v3
         with:

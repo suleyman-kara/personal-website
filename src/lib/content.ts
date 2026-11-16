@@ -1,9 +1,7 @@
-// Build-time content: Markdown posts in content/blog/<slug>/<lang>.md plus the
-// auto-imported YouTube videos in src/data/youtube.json. Server-only (uses fs).
+// Build-time content: Markdown posts in content/blog/<slug>/<lang>.md. Server-only (uses fs).
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import youtube from '@/data/youtube.json';
 import { LANGS, type Lang, type PostKind } from './site';
 
 const BLOG_DIR = path.join(process.cwd(), 'content', 'blog');
@@ -38,13 +36,6 @@ export interface StreamItem {
   image?: string;
   href: string;
   external: boolean;
-}
-
-interface Video {
-  id: string;
-  title: string;
-  published: string;
-  thumbnail: string;
 }
 
 function toDate(v: unknown, file: string): string {
@@ -125,14 +116,9 @@ export const hasPost = (lang: Lang, slug: string) => getPost(lang, slug) !== nul
 
 export const postPath = (slug: string) => `/blog/${slug}/`;
 
-function videos(): Video[] {
-  return ((youtube as { videos?: Video[] }).videos ?? []).filter((v) => v && v.id && v.title);
-}
-
-/** Posts plus imported videos, newest first. A post with the same `youtube` id replaces the import. */
+/** All posts, newest first. Videos appear only as posts with `kind: video`. */
 export function getStream(lang: Lang): StreamItem[] {
   const posts = getPosts(lang);
-  const covered = new Set(posts.map((p) => p.youtube).filter(Boolean));
   const items: StreamItem[] = posts.map((p) => ({
     key: `post:${p.slug}`,
     kind: p.kind,
@@ -144,18 +130,6 @@ export function getStream(lang: Lang): StreamItem[] {
     href: postPath(p.slug),
     external: false,
   }));
-  for (const v of videos()) {
-    if (covered.has(v.id)) continue;
-    items.push({
-      key: `yt:${v.id}`,
-      kind: 'video',
-      title: v.title,
-      date: v.published.slice(0, 10),
-      image: v.thumbnail,
-      href: `https://www.youtube.com/watch?v=${v.id}`,
-      external: true,
-    });
-  }
   return items.sort((a, b) => b.date.localeCompare(a.date) || a.key.localeCompare(b.key));
 }
 
