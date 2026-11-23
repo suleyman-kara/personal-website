@@ -30,6 +30,8 @@ jobs:
         run: node scripts/fetch-github.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Fetch live forecast snapshot
+        run: node scripts/fetch-forecast.mjs
       - run: npm run build # static export into dist/
       - uses: actions/upload-pages-artifact@v3
         with:

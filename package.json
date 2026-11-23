@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build && node scripts/postbuild.mjs",
     "typecheck": "tsc --noEmit",
-    "fetch:github": "node scripts/fetch-github.mjs"
+    "fetch:github": "node scripts/fetch-github.mjs",
+    "fetch:forecast": "node scripts/fetch-forecast.mjs"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

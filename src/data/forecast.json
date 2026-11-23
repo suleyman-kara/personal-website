@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "generatedAt": "2026-11-23T00:00:00Z",
+  "asset": "BTC-USD",
+  "interval": "4h",
+  "mode": "paper",
+  "startingBalance": 10000,
+  "model": null,
+  "current": null,
+  "stats": {
+    "predictions": 0,
+    "scored": 0,
+    "hits": 0,
+    "accuracy": null,
+    "accuracy30d": null,
+    "equity": 10000,
+    "returnPct": 0,
+    "buyHoldReturnPct": 0,
+    "maxDrawdownPct": 0,
+    "since": null
+  },
+  "equity": [],
+  "recent": [],
+  "backtest": null
+}
