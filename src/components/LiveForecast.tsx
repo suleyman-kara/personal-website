@@ -56,9 +56,10 @@ export interface ForecastStatus {
   equity: { t: string; model: number; buyHold: number }[];
   recent: {
     candleOpen: string;
+    /** p, direction and action are null for a skipped slot (no prediction was made). */
     p: number | null;
-    direction: Direction;
-    action: Action;
+    direction: Direction | null;
+    action: Action | null;
     outcome: Outcome;
     realizedReturnPct: number | null;
   }[];
@@ -642,9 +643,15 @@ function Recent({ rows, lang, fmt }: { rows: ForecastStatus['recent']; lang: Lan
           <li key={r.candleOpen} className="py-2.5 grid grid-cols-[1fr_auto] sm:grid-cols-[9.5rem_1fr_auto_4.5rem] items-center gap-x-4 gap-y-1">
             <span className="text-xs text-subtle tabular-nums sm:text-sm">{fmt.time(r.candleOpen)}</span>
             <span className="row-start-2 sm:row-start-auto inline-flex flex-wrap items-center gap-x-2.5">
-              <DirectionMark dir={r.direction} lang={lang} />
-              {r.p != null && <span className="text-xs text-subtle tabular-nums">{fmt.whole(confidence(r.p, r.direction))}</span>}
-              <span className="text-xs text-muted">· {r.action === 'long' ? 'Long' : t('Flat', 'Nakit')}</span>
+              {r.direction ? (
+                <>
+                  <DirectionMark dir={r.direction} lang={lang} />
+                  {r.p != null && <span className="text-xs text-subtle tabular-nums">{fmt.whole(confidence(r.p, r.direction))}</span>}
+                </>
+              ) : (
+                <span className="text-xs text-subtle">{t('No prediction', 'Tahmin yok')}</span>
+              )}
+              {r.action && <span className="text-xs text-muted">· {r.action === 'long' ? 'Long' : t('Flat', 'Nakit')}</span>}
             </span>
             <span className="justify-self-end">
               <OutcomeMark outcome={r.outcome} lang={lang} />
