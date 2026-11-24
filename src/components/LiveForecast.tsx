@@ -785,7 +785,7 @@ export default function LiveForecast({ lang, variant = 'full' }: { lang: Lang; v
               <Stats data={data} lang={lang} fmt={fmt} compact />
             </div>
             <div className="lg:col-span-7 min-w-0">
-              {data.equity.length > 0 && <EquityChart points={data.equity} lang={lang} fmt={fmt} height={150} compact />}
+              {data.equity.length > 1 && <EquityChart points={data.equity} lang={lang} fmt={fmt} height={150} compact />}
             </div>
           </div>
         )}
@@ -826,7 +826,7 @@ export default function LiveForecast({ lang, variant = 'full' }: { lang: Lang; v
           <div className="mt-8">
             <h3 className="text-sm font-semibold text-ink">{t('Paper portfolio vs buy & hold', 'Paper portföy ve al-tut')}</h3>
             <div className="mt-3">
-              {data.equity.length > 0 ? (
+              {data.equity.length > 1 ? (
                 <EquityChart points={data.equity} lang={lang} fmt={fmt} height={220} />
               ) : (
                 <p className="text-sm text-subtle">{t('The equity curve starts after the first scored prediction.', 'Getiri eğrisi ilk sonuçlanan tahminden sonra başlar.')}</p>
