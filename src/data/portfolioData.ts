@@ -46,6 +46,10 @@ export interface ProjectItem {
     tr: string[];
   };
   agentNote?: BilingualText;
+  /** Renders a live data card on the project page. */
+  live?: 'forecast';
+  /** A linked project, shown on the project page. */
+  related?: { id: string; label: BilingualText };
 }
 
 export const PROFILE_DATA = {
@@ -444,6 +448,39 @@ export const PROJECTS: ProjectItem[] = [
     },
   },
   {
+    id: 'crypto-forecasting-live',
+    name: 'Crypto Forecasting Live',
+    badge: {
+      en: 'Live ML Model · Paper Trading',
+      tr: 'Canlı ML Modeli · Paper Trading',
+    },
+    category: 'ml',
+    period: { en: 'Nov 2026 – Present', tr: 'Kasım 2026 – Devam ediyor' },
+    repoUrl: 'https://github.com/suleyman-kara/crypto-forecasting-live',
+    tech: ['Python', 'XGBoost', 'Scikit-Learn', 'Scikit-Optimize', 'Pandas', 'GitHub Actions'],
+    summary: {
+      en: 'XGBoost classifier that predicts whether the next 4-hour BTC-USD candle closes up, publishes every prediction before the outcome is known, and trades a virtual $10,000 paper portfolio on it.',
+      tr: 'Bir sonraki 4 saatlik BTC-USD mumunun yükselişle kapanıp kapanmayacağını tahmin eden, her tahmini sonuç belli olmadan yayınlayan ve bu tahminlerle sanal 10.000 $’lık bir paper portföy yöneten XGBoost sınıflandırıcısı.',
+    },
+    bullets: {
+      en: [
+        'Built a scheduled GitHub Actions pipeline that publishes each prediction before its candle closes and commits it to git, making the prediction log tamper-evident: every result can be checked against its commit time.',
+        'Fixed the internship project’s known limitations: walk-forward validation with an untouched holdout replaces model selection on the test set, and TimeSeriesSplit with a gap replaces shuffled cross-validation folds.',
+        'Benchmarked a long/flat paper portfolio (with fees and slippage) against buy & hold, reporting hit rate, return and max drawdown next to simple baselines.',
+      ],
+      tr: [
+        'Her tahmini mum kapanmadan yayınlayıp git’e commit eden zamanlanmış bir GitHub Actions akışı kurdu; böylece tahmin kaydı sonradan değiştirilemez ve her sonuç commit zamanıyla doğrulanabilir.',
+        'Staj projesinin bilinen kısıtlarını giderdi: test setine bakarak model seçmek yerine walk-forward doğrulama ve hiç dokunulmayan bir holdout, rastgele CV katmanları yerine boşluklu (gap) TimeSeriesSplit kullandı.',
+        'Komisyon ve kaymayı hesaba katan long/flat bir paper portföyü al-tut stratejisiyle karşılaştırdı; isabet oranı, getiri ve maksimum düşüşü basit baseline’ların yanında raporladı.',
+      ],
+    },
+    live: 'forecast',
+    related: {
+      id: 'retail-sales-forecasting',
+      label: { en: 'Builds on the internship project', tr: 'Staj projesinin devamı' },
+    },
+  },
+  {
     id: 'retail-sales-forecasting',
     name: 'Retail Sales Forecasting App',
     badge: {
@@ -467,6 +504,10 @@ export const PROJECTS: ProjectItem[] = [
         'Veri sızıntısını önleyen train/test birleştirme mimarisiyle takvim ve gecikme özellikleri (Lag 1, Lag 52) üretti; gerçek değerlere karşı RMSE, MAE ve MAPE grafiklerini raporladı.',
         'Sıfır değerli hedeflerdeki MAPE sapmasını çözerek modelleri MAE bazlı sıraladı ve tasarım kararlarını dokümante etti.',
       ],
+    },
+    related: {
+      id: 'crypto-forecasting-live',
+      label: { en: 'Continued as a live model', tr: 'Canlı model olarak devam ediyor' },
     },
   },
   {

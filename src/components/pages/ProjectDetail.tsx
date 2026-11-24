@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, ArrowUpRight, Github, Globe, Terminal } from 'lucide-react';
 import { PROJECTS, type ProjectItem } from '@/data/portfolioData';
+import LiveForecast from '../LiveForecast';
 import { localePath, type Lang } from '@/lib/site';
 import { card, chip, lift, nudgeLeft, nudgeRight, nudgeUpRight, primaryBtn, secondaryBtn } from '../styles';
 
@@ -16,6 +17,7 @@ export default function ProjectDetail({ lang, project: p }: { lang: Lang; projec
   const prev = i > 0 ? PROJECTS[i - 1] : null;
   const next = i < PROJECTS.length - 1 ? PROJECTS[i + 1] : null;
   const projectHref = (x: ProjectItem) => localePath(lang, `/projects/${x.id}/`);
+  const related = p.related ? PROJECTS.find((x) => x.id === p.related!.id) : undefined;
 
   return (
     <article className="max-w-3xl mx-auto px-5 pt-10 sm:pt-14 pb-16 sm:pb-24">
@@ -45,6 +47,12 @@ export default function ProjectDetail({ lang, project: p }: { lang: Lang; projec
           </div>
         )}
       </header>
+
+      {p.live === 'forecast' && (
+        <div className="mt-10">
+          <LiveForecast lang={lang} variant="full" />
+        </div>
+      )}
 
       {p.image && (
         <figure className="mt-10 overflow-hidden rounded-2xl border border-line/80 shadow-[0_13px_27px_-5px_rgba(50,50,93,0.15),0_8px_16px_-8px_rgba(0,0,0,0.1)] dark:shadow-none">
@@ -84,6 +92,15 @@ export default function ProjectDetail({ lang, project: p }: { lang: Lang; projec
             <Terminal className="w-4 h-4 text-accent shrink-0 mt-1" />
             <span>{p.agentNote[lang]}</span>
           </div>
+        )}
+        {related && p.related && (
+          <Link href={projectHref(related)} data-glow className={`group mt-8 ${card} ${lift} p-5 flex items-center justify-between gap-4`}>
+            <span className="min-w-0">
+              <span className="block text-xs text-subtle">{p.related.label[lang]}</span>
+              <span className="mt-1 block font-semibold text-ink">{related.name}</span>
+            </span>
+            <ArrowRight className={`w-4 h-4 shrink-0 text-accent ${nudgeRight}`} />
+          </Link>
         )}
       </section>
 

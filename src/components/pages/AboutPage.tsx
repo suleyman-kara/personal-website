@@ -4,6 +4,7 @@ import { Award, Github, Globe, Trophy } from 'lucide-react';
 import { COMPETITIONS, EXPERIENCES, PROFILE_DATA, SKILL_GROUPS } from '@/data/portfolioData';
 import { rv } from '@/motion';
 import GithubActivity from '@/GithubActivity';
+import LiveForecast from '../LiveForecast';
 import type { Lang } from '@/lib/site';
 import { SectionHeader } from '../ui';
 import { card, chip } from '../styles';
@@ -130,6 +131,9 @@ export default function AboutPage({ lang }: { lang: Lang }) {
           </div>
           <div id="github" className={`mt-5 ${anchor}`}>
             <GithubActivity lang={lang} profileUrl={PROFILE_DATA.github} cardClass={card} />
+          </div>
+          <div className="mt-5">
+            <LiveForecast lang={lang} variant="compact" />
           </div>
         </div>
       </section>
